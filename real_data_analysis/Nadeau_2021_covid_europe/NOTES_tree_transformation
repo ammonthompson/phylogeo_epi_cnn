@@ -1,0 +1,15 @@
+Hubei	0
+France	1
+Germany	2
+Italy	3
+OtherEuropean	4
+
+0.5dayUnits_full_tree_mean_bl     25.36
+0.5dayUnits_full_tree_length      192.72
+full_tree_ntips	145
+
+0.5dayUnits_A2_tree_mean_bl       22.06
+0.5dayUnits_A2_tree_length        109.14
+A2_tree_ntips   93
+
+0.5dayUnits_recovery_rate 0.05
