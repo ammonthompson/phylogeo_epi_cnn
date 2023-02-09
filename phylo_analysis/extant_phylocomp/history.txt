@@ -1,9 +1,0 @@
-time
-tim("seconds")
-time("seconds")
-bob=time("second")
-bob=time("seconds")
-time("seconds") - bob
-time("minutes")
-time("fromBeginning")
-q()

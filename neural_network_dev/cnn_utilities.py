@@ -129,60 +129,6 @@ def create_data_tensors(data, mu, subsample_prop,
     return full_treeLocation_tensor, full_prior_tensor
     
 
-        
-def old_create_data_tensors(data, tree_length, mean_bl, num_tips,
-                        max_tips = 502, num_locs = 5, 
-                        normalize_tree_stats = True):
-    
-    num_sample = data.shape[0]
-    
-    full_data_tensor = data.reshape((num_sample, max_tips, num_locs + 2), order = 'C')
-
-    ### divide full_data_tensor into treeLocations, and prior tensors
-
-    # tree and location tensor
-    full_treeLocation_tensor = full_data_tensor[:,:max_tips-3,:]
-
-    # prior tensor
-    linear_subprop = 2 * full_data_tensor[:,max_tips-1,0]
-    subprop = np.repeat(linear_subprop, 2)
-    subprop = subprop.reshape((num_sample, 1, 2))
-    mu = full_data_tensor[:,max_tips-3,0] 
-    mu = np.repeat(50 * mu , 2)
-    mu = mu.reshape((num_sample , 1, 2))
-    
-    
-    if(normalize_tree_stats):
-        #norm_nt = (num_tips - np.min(num_tips))/(np.max(num_tips) - np.min(num_tips))
-        norm_nt = (num_tips - np.mean(num_tips))/np.std(num_tips)
-        norm_num_tips = np.repeat(norm_nt, 2)
-        norm_num_tips = norm_num_tips.reshape((num_sample, 1, 2))
-
-            # tree length
-        norm_d = (tree_length - np.mean(tree_length))/np.std(tree_length)
-        norm_tree_length = np.repeat(norm_d, 2)
-        norm_tree_length = norm_tree_length.reshape((num_sample, 1, 2))
-
-            # mean branch length
-        norm_bl = (mean_bl - np.mean(mean_bl))/np.std(mean_bl)
-        norm_branchlength = np.repeat(norm_bl, 2)
-        norm_branchlength = norm_branchlength.reshape((num_sample, 1, 2))
-
-    else:
-        norm_num_tips = np.repeat(num_tips, 2)
-        norm_num_tips = norm_num_tips.reshape((num_sample, 1, 2))
-        norm_tree_length = np.repeat(tree_length, 2)
-        norm_tree_length = norm_tree_length.reshape((num_sample, 1, 2))
-        norm_branchlength = np.repeat(mean_bl, 2)
-        norm_branchlength = norm_branchlength.reshape((num_sample, 1, 2))
-        
-    # put them together
-    full_prior_tensor = np.concatenate((mu, subprop, norm_num_tips, norm_tree_length, norm_branchlength), axis = 1)
-        
-    return full_treeLocation_tensor, full_prior_tensor
-        
-
-
 def create_train_val_test_tensors(full_tensor, num_validation, num_test):
     # training tensors
     train_tensor = full_tensor[num_test + num_validation:,:,:]

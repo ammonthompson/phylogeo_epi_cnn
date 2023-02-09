@@ -1,1 +1,0 @@
-iqtree -s sim0.sim00.alignment.nexus --date sim0.ages -m "JC" --prefix out_iqtree_test 
