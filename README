@@ -1,0 +1,21 @@
+Basic setup:
+
+beast 2 with the package MASTER installed for simulation. 
+Assumes the executable is called "beast2" is in a directory in 
+your $PATH. In a directory in your path make the following soft link: 
+ln -s /path/to/bin/beast beast2
+
+R,Rscript with the following libraries for simulation and analysis:
+vioplot, expm, BEST, phytools, rjson
+
+pyhon3 with the following packages for machine learning:
+numpy, scipy, pandas, ete3, matplotlib, keras, sklearn
+
+If simulating genome sequence evolution:
+Assumes seq-gen is in your $PATH
+
+# Basic command to simulate training and test trees:
+randomParams_Simulation.sh control_file.txt num_locations sim_num_from,sim_num_to output/file_prefix
+for example
+./randomParams_Simulation.sh control_files/testing_controlfile.txt 5 1,10 sim_output/mytest
+ 
