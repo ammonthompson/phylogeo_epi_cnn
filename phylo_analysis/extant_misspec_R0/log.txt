@@ -1,0 +1,242 @@
+6
+Generate random parameters for simulation 421
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	15
+
+Generate random parameters for simulation 422
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Removing unwanted files
+transforming tree + geo to cblv format
+Finished
+
+Total run time:	10
+
+Generate random parameters for simulation 423
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	16
+
+Generate random parameters for simulation 424
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	16
+
+Generate random parameters for simulation 425
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	14
+
+Generate random parameters for simulation 426
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	19
+
+Generate random parameters for simulation 427
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	14
+
+Generate random parameters for simulation 428
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+no trees
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	3
+
+Generate random parameters for simulation 429
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Removing unwanted files
+transforming tree + geo to cblv format
+Finished
+
+Total run time:	12
+
+Generate random parameters for simulation 430
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	16
+
+Generate random parameters for simulation 431
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	15
+
+Generate random parameters for simulation 432
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	16
+
+Generate random parameters for simulation 433
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	17
+
+Generate random parameters for simulation 434
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	16
+
+Generate random parameters for simulation 435
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+no trees
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	4
+
+Generate random parameters for simulation 436
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	15
+
+Generate random parameters for simulation 437
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	14
+
+Generate random parameters for simulation 438
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	16
+
+Generate random parameters for simulation 439
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+no trees
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	3
+
+Generate random parameters for simulation 440
+Begin simulation
+model:  SIR
+generating MASTER xml file
+running MASTER simulations
+creating metadata and location tree nexus files
+Finished simulation
+Recording simulation parameters and summary statistics
+Simulation failed, parameters are recorded in the failed param file
+
+Total run time:	18
+

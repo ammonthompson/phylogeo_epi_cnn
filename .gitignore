@@ -19,5 +19,4 @@ MASTER/output_sims/**
 **/neural_network_dev/data_files/
 **/*.ci
 **/*.lib.bib
-**/*.tar.gz
 **/*.tar

@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 #import phylodeep.sumstats as sumstats
-import ammon_sumstats as sumstats
+
 
 from collections import Counter
 
@@ -92,59 +92,7 @@ def rescale_tree(tre, target_avg_length):
 
     return resc_factor
 
-
-def encode_into_summary_statistics(tree_input, sampling_proba):
-    """Rescales all trees from tree_file so that mean branch length is 1,
-    then encodes them into summary statistics representation
-
-    :param tree_input: ete3.Tree, on which the summary statistics will be computed
-    :param sampling_proba: float, presumed sampling probability for all the trees
-    :return: pd.Dataframe, encoded rescaled input trees in the form of summary statistics and float, a rescale factor
-    """
-    # local copy of input tree
-    tree = tree_input.copy()
-
-    # compute the rescale factor
-    rescale_factor = rescale_tree(tree, target_avg_length=TARGET_AVG_BL)
-
-    # add accessory attributes
-    name_tree(tree)
-    max_depth = sumstats.add_depth_and_get_max(tree)
-    add_dist_to_root(tree)
-    sumstats.add_ladder(tree)
-    sumstats.add_height(tree)
-
-    # compute summary statistics based on branch lengths
-    summaries = []
-    summaries.extend(sumstats.tree_height(tree))
-    summaries.extend(sumstats.branches(tree))
-    summaries.extend(sumstats.piecewise_branches(tree, summaries[0], summaries[5], summaries[6], summaries[7]))
-    summaries.append(sumstats.colless(tree))
-    summaries.append(sumstats.sackin(tree))
-    summaries.extend(sumstats.wd_ratio_delta_w(tree, max_dep=max_depth))
-    summaries.extend(sumstats.max_ladder_il_nodes(tree))
-    summaries.extend(sumstats.staircaseness(tree))
-
-    # compute summary statistics based on LTT plot
-
-    ltt_plot_matrix = sumstats.ltt_plot(tree)
-    summaries.extend(sumstats.ltt_plot_comput(ltt_plot_matrix))
-
-    # compute LTT plot coordinates
-
-    summaries.extend(sumstats.coordinates_comp(ltt_plot_matrix))
-
-    # compute summary statistics based on transmission chains (order 4):
-
-    summaries.append(len(tree))
-    summaries.extend(sumstats.compute_chain_stats(tree, order=4))
-    summaries.append(sampling_proba)
-
-    result = pd.DataFrame(summaries, columns=[0])
-
-    result = result.T
-
-    return result, rescale_factor
+    
 
 
 def encode_into_most_recent(tree_input, sampling_proba):

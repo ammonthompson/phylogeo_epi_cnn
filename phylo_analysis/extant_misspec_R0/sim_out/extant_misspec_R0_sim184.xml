@@ -1,0 +1,203 @@
+<beast version='2.0' namespace='master:master.model:master.steppers:master.conditions:master.postprocessors:master.outputs'>
+
+<run spec='InheritanceEnsemble'
+		verbosity='1'
+		nTraj='1'
+		samplePopulationSizes="true" 
+		simulationTime='100.0000100000'
+		maxConditionRejects='1'>
+
+<model spec='Model'>
+	<populationType spec='PopulationType' typeName='S' id='S' dim='5'/>
+ 	<populationType spec='PopulationType' typeName='I' id='I' dim='5'/>
+	<populationType spec='PopulationType' typeName='D' id='D'/>
+	<populationType spec='PopulationType' typeName='R' id='R'/>
+
+	<populationType spec='PopulationType' typeName='M_into_0' id='M_into_0' dim='5'/>
+	<populationType spec='PopulationType' typeName='M_into_1' id='M_into_1' dim='5'/>
+	<populationType spec='PopulationType' typeName='M_into_2' id='M_into_2' dim='5'/>
+	<populationType spec='PopulationType' typeName='M_into_3' id='M_into_3' dim='5'/>
+	<populationType spec='PopulationType' typeName='M_into_4' id='M_into_4' dim='5'/>
+
+<reactionGroup spec='ReactionGroup' reactionGroupName='Infection'>
+ <reaction spec='Reaction' reactionName="Infection" rate="0.000000090013"> 
+ 	S[0] + I[0]:1 -> 2I[0]:1 
+ </reaction>
+ <reaction spec='Reaction' reactionName="Infection" rate="0.000000057004"> 
+ 	S[1] + I[1]:1 -> 2I[1]:1 
+ </reaction>
+ <reaction spec='Reaction' reactionName="Infection" rate="0.000000107610"> 
+ 	S[2] + I[2]:1 -> 2I[2]:1 
+ </reaction>
+ <reaction spec='Reaction' reactionName="Infection" rate="0.000000125776"> 
+ 	S[3] + I[3]:1 -> 2I[3]:1 
+ </reaction>
+ <reaction spec='Reaction' reactionName="Infection" rate="0.000000091350"> 
+ 	S[4] + I[4]:1 -> 2I[4]:1 
+ </reaction>
+</reactionGroup>
+
+<reactionGroup spec='ReactionGroup' reactionGroupName='Migration'>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[0] -> I[1] + M_into_1[0] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[0] -> I[2] + M_into_2[0] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[0] -> I[3] + M_into_3[0] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[0] -> I[4] + M_into_4[0] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[1] -> I[0] + M_into_0[1] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[1] -> I[2] + M_into_2[1] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[1] -> I[3] + M_into_3[1] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[1] -> I[4] + M_into_4[1] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[2] -> I[0] + M_into_0[2] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[2] -> I[1] + M_into_1[2] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[2] -> I[3] + M_into_3[2] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[2] -> I[4] + M_into_4[2] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[3] -> I[0] + M_into_0[3] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[3] -> I[1] + M_into_1[3] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[3] -> I[2] + M_into_2[3] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[3] -> I[4] + M_into_4[3] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[4] -> I[0] + M_into_0[4] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[4] -> I[1] + M_into_1[4] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[4] -> I[2] + M_into_2[4] 
+ </reaction>
+<reaction spec='Reaction' reactionName="Migration" rate="0.00384"> 
+ 	I[4] -> I[3] + M_into_3[4] 
+ </reaction>
+</reactionGroup>
+
+<reactionGroup spec='ReactionGroup' reactionGroupName='Sample_recovery'>
+<reaction spec='Reaction' reactionName="Sample_recovery" rate=".00412,1000:100.00000,0:100.0000100000"> 
+ 	I[0] -> R + D 
+ </reaction>
+<reaction spec='Reaction' reactionName="Sample_recovery" rate=".00412,1000:100.00000,0:100.0000100000"> 
+ 	I[1] -> R + D 
+ </reaction>
+<reaction spec='Reaction' reactionName="Sample_recovery" rate=".00412,1000:100.00000,0:100.0000100000"> 
+ 	I[2] -> R + D 
+ </reaction>
+<reaction spec='Reaction' reactionName="Sample_recovery" rate=".00412,1000:100.00000,0:100.0000100000"> 
+ 	I[3] -> R + D 
+ </reaction>
+<reaction spec='Reaction' reactionName="Sample_recovery" rate=".00412,1000:100.00000,0:100.0000100000"> 
+ 	I[4] -> R + D 
+ </reaction>
+</reactionGroup>
+
+<reactionGroup spec='ReactionGroup' reactionGroupName='Recovery'>
+<reaction spec='Reaction' reactionName="Recovery" rate=".01199"> 
+ 	I[0] -> R 
+ </reaction>
+<reaction spec='Reaction' reactionName="Recovery" rate=".01199"> 
+ 	I[1] -> R 
+ </reaction>
+<reaction spec='Reaction' reactionName="Recovery" rate=".01199"> 
+ 	I[2] -> R 
+ </reaction>
+<reaction spec='Reaction' reactionName="Recovery" rate=".01199"> 
+ 	I[3] -> R 
+ </reaction>
+<reaction spec='Reaction' reactionName="Recovery" rate=".01199"> 
+ 	I[4] -> R 
+ </reaction>
+</reactionGroup>
+</model>
+
+<initialState spec='InitState'>
+<populationSize spec='PopulationSize' size='1000000'>
+	 <population spec='Population' type='@S' location="0"/>
+</populationSize>
+<populationSize spec='PopulationSize' size='1000000'>
+	 <population spec='Population' type='@S' location="1"/>
+</populationSize>
+<populationSize spec='PopulationSize' size='1000000'>
+	 <population spec='Population' type='@S' location="2"/>
+</populationSize>
+<populationSize spec='PopulationSize' size='1000000'>
+	 <population spec='Population' type='@S' location="3"/>
+</populationSize>
+<populationSize spec='PopulationSize' size='1000000'>
+	 <population spec='Population' type='@S' location="4"/>
+</populationSize>
+<lineageSeedMultiple spec='MultipleIndividuals' copies='0' >
+	<population spec='Population' type='@I' location='0'/>
+</lineageSeedMultiple>
+<lineageSeedMultiple spec='MultipleIndividuals' copies='0' >
+	<population spec='Population' type='@I' location='1'/>
+</lineageSeedMultiple>
+<lineageSeedMultiple spec='MultipleIndividuals' copies='0' >
+	<population spec='Population' type='@I' location='2'/>
+</lineageSeedMultiple>
+<lineageSeedMultiple spec='MultipleIndividuals' copies='0' >
+	<population spec='Population' type='@I' location='3'/>
+</lineageSeedMultiple>
+<lineageSeedMultiple spec='MultipleIndividuals' copies='1' >
+	<population spec='Population' type='@I' location='4'/>
+</lineageSeedMultiple>
+</initialState>
+
+<lineageEndCondition spec='LineageEndCondition' 
+ nLineages="50000" alsoGreaterThan="true" isRejection="false"/>
+<lineageEndCondition spec='LineageEndCondition'
+ nLineages="0" alsoGreaterThan="false" isRejection="false">
+	<population spec='Population' type='@I' location="0"/>
+	<population spec='Population' type='@I' location="1"/>
+	<population spec='Population' type='@I' location="2"/>
+	<population spec='Population' type='@I' location="3"/>
+	<population spec='Population' type='@I' location="4"/>
+</lineageEndCondition>
+
+<inheritancePostProcessor spec='LineageFilter' 
+ reactionName="Sample_recovery" 
+ reverseTime="false" 
+ discard="false" 
+ leavesOnly="false" 
+ noClean="false" />
+
+<inheritancePostProcessor spec='LineageSampler' 
+ nSamples="499" />
+
+<postSimCondition spec='LeafCountPostSimCondition' 
+ nLeaves="20" 
+ exact="false" 
+ exceedCondition="true"/>
+
+<output spec='NewickOutput' collapseSingleChildNodes="true" fileName="/home/athompson/research/epi_geo_simulation/phylo_analysis/extant_misspec_R0/sim_out/extant_misspec_R0_sim184.newick" />
+<output spec='NexusOutput' fileName="/home/athompson/research/epi_geo_simulation/phylo_analysis/extant_misspec_R0/sim_out/extant_misspec_R0_sim184.nexus" />
+<output spec='JsonOutput' fileName="/home/athompson/research/epi_geo_simulation/phylo_analysis/extant_misspec_R0/sim_out/extant_misspec_R0_sim184.json" />
+</run>
+</beast>
