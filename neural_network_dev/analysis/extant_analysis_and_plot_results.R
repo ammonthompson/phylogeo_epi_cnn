@@ -64,7 +64,7 @@ make_experiment_figure(extant_miss_numloc_cnn_preds, extant_miss_numloc_phylo_pr
 
 ######### MTBD CNN real data covid ###############
 nadeau2021_cnn_pred = read.table("../output/mtbd_nadeau2021_cnn_preds_full_and_a2.tsv", header =T, row.names = NULL)
-nadeau2021_R0_log = read.table("../data_files/other_files/nadeau2021_deathdelay_europe_clade_demeR0.log", header = T, row.names =1)
+nadeau2021_R0_log = read.table("../../real_data_analysis/nadeau2021_deathdelay_europe_clade_demeR0.log", header = T, row.names =1)
 nadeau2021_root = c(0.3, 0.01, 0.45, 0.23, 0.01)
 
 locations = c("Hubei", "France", "Germany", "Italy", "Other Eur.")
