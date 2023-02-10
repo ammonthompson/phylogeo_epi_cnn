@@ -10,5 +10,5 @@ for i in ${header[@]};do
 done
 echo ${newheader[@]}
 
-sed -i  $(echo "1s/.*/"$(echo ${newheader[@]} |sed 's/ /\\t/g')"/g") $logfile
+sed -i $(echo "1s/.*/"$(echo ${newheader[@]} |sed 's/ /\\t/g')"/g") $logfile
 
