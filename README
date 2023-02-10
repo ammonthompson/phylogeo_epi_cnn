@@ -18,4 +18,8 @@ Assumes seq-gen is in your $PATH
 randomParams_Simulation.sh control_file.txt num_locations sim_num_from,sim_num_to output/file_prefix
 for example
 ./randomParams_Simulation.sh control_files/testing_controlfile.txt 5 1,10 sim_output/mytest
+
+
+# the final analysis script that generates results and figures for the manuscript is:
+analysis_plotting/extant_analysis_and_plot_results.R
  
