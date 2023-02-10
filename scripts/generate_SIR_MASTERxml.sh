@@ -43,6 +43,8 @@ round(){
 export -f round
 
 expand_rate_string(){
+	# this function ensures each rate has $numLocs rates 
+	# separated by $delimiter.
 	rate=$1
 	delimiter=$2
 	if [[ ! -n $rate  || ! -n $delimiter ]];then
