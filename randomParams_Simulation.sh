@@ -113,14 +113,14 @@ for i in $(seq $(echo $SIM_RANGE |cut -d ',' -f 1) $(echo $SIM_RANGE |cut -d ','
 		sed -i -r 's/^GEO_POSITION_X.*/GEO_POSITION_X\t'$xpos'/' $CONTROL_FILE ; 
 		sed -i -r 's/^GEO_POSITION_Y.*/GEO_POSITION_Y\t'$ypos'/' $CONTROL_FILE; 
 	else
-		sed -i '/GEO_POSITION/d' $CONTROL_FILE
+		sed -i -r '/GEO_POSITION/d' $CONTROL_FILE
 	fi
 	migration_scale=$($random_num_dir/runiform.sh 1 $m_scale_range)
 	sed -i -r 's/^MIGRATION_SCALE.*/MIGRATION_SCALE\t'$migration_scale'/' $CONTROL_FILE
 
 	# random index location
 	seed=$($random_num_dir/onehot.sh $($random_num_dir/rsample.sh 1 $(seq $NUM_LOCS |tr $'\n' ,|sed 's/,$//g')) $NUM_LOCS| sed 's/ /,/g' |sed 's/,$//g'); 
-	sed -i 's/^SEED_NUMBER.*/SEED_NUMBER\t'$seed'/g' $CONTROL_FILE; 
+	sed -i -r 's/^SEED_NUMBER.*/SEED_NUMBER\t'$seed'/g' $CONTROL_FILE; 
 
 
 	# random mu between 1 and 3 shared by all locations
