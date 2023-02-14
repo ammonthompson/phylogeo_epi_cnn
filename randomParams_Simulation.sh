@@ -175,17 +175,17 @@ for i in $(seq $(echo $SIM_RANGE |cut -d ',' -f 1) $(echo $SIM_RANGE |cut -d ','
 	else
 		R_0=($($random_num_dir/repeat.sh $($random_num_dir/runiform.sh 1 $R0_range) $NUM_LOCS))
 	fi
-	declare -a beta
+	declare -a beta_over_N
 	for j in $(seq 0 $((NUM_LOCS-1)) );do
 
 		if [[ $SAMPLE_RECOVER == 'true' ]];then
 			ss=${sampling_rate[j]}
-			beta+=($(echo $(echo $mu \+ $ss |bc -l) \* ${R_0[j]} \/ ${S_0[j]} | bc -l|sed -r 's/([^\.]*\.[0-9]{12}).*/\1/' |sed 's/^\./0./'))
+			beta_over_N+=($(echo $(echo $mu \+ $ss |bc -l) \* ${R_0[j]} \/ ${S_0[j]} | bc -l|sed -r 's/([^\.]*\.[0-9]{12}).*/\1/' |sed 's/^\./0./'))
 		else
-			beta+=($(echo $mu \* ${R_0[j]} \/ ${S_0[j]} | bc -l|sed -r 's/([^\.]*\.[0-9]{12}).*/\1/'))
+			beta_over_N+=($(echo $mu \* ${R_0[j]} \/ ${S_0[j]} | bc -l|sed -r 's/([^\.]*\.[0-9]{12}).*/\1/'))
 		fi
 	done
-	sed -i -r 's/^INFECTION_REL_RATE.*/INFECTION_REL_RATE\t'$(echo ${beta[@]} |sed 's/ /@/g')'/' $CONTROL_FILE
+	sed -i -r 's/^INFECTION_REL_RATE.*/INFECTION_REL_RATE\t'$(echo ${beta_over_N[@]} |sed 's/ /@/g')'/' $CONTROL_FILE
 
 	echo Begin simulation
 
@@ -227,7 +227,7 @@ for i in $(seq $(echo $SIM_RANGE |cut -d ',' -f 1) $(echo $SIM_RANGE |cut -d ','
 	index_location_header=$(f_repeat "index_location" $NUM_LOCS)
 	R_0_header=$(f_repeat "R_0" $NUM_LOCS)
 	S_0_header=$(f_repeat "S_0" $NUM_LOCS)
-        beta_header=$(f_repeat "beta" $NUM_LOCS)
+        beta_over_N_header=$(f_repeat "beta_over_N" $NUM_LOCS)
         sampling_rate_header=$(f_repeat "sampling_rate" $NUM_LOCS)
 	total_infections_per_capita_header=$(f_repeat "infections_per_capita" $NUM_LOCS)
 	time_of_first_importation_header=$(f_repeat "time_of_first_import" $NUM_LOCS)
@@ -259,7 +259,7 @@ for i in $(seq $(echo $SIM_RANGE |cut -d ',' -f 1) $(echo $SIM_RANGE |cut -d ','
 		migration_rates_labels=$(head -n 1 ${OUT_PREFIX}_sim${i}_migrtn_rates.csv)
 		echo sim_number$'\t'$migration_location_xcoord_labels$'\t'$migration_location_ycoord_labels$'\t'$migration_rates_labels > ${OUT_PREFIX}_migration_param_values.txt
 
-		echo sim_number$'\t'${index_location_header}$'\t'${R_0_header}$'\t'${S_0_header}$'\t'${beta_header}\
+		echo sim_number$'\t'${index_location_header}$'\t'${R_0_header}$'\t'${S_0_header}$'\t'${beta_over_N_header}\
 		$'\t'mu$'\t'${sampling_rate_header}$'\t'max_tips$'\t'mean_migration_rate$'\t'\
 	        tree_length$'\t'num_tips$'\t'mean_branch_length$'\t'$importations_per_capita_header$'\t'\
 		$total_infections_per_capita_header$'\t'$time_of_first_importation_header$'\t'proportion_tips_sampled\
@@ -281,9 +281,9 @@ for i in $(seq $(echo $SIM_RANGE |cut -d ',' -f 1) $(echo $SIM_RANGE |cut -d ','
 	if [[ $(wc -l ${OUT_PREFIX}_sim${i}.newick |cut -d ' ' -f 1) -eq 0 || $NUM_EXTANT_SAMPLED == 0 ]];then
 		rm ${OUT_PREFIX}_sim${i}\.* ${OUT_PREFIX}_sim${i}_*
 		echo sim_$i$'\t'$seed$'\t'$(echo ${R_0[@]} |sed 's/ /,/g')$'\t'$(echo ${S_0[@]}|sed 's/ /,/g')$'\t'\
-		$(echo ${beta[@]}|sed 's/ /,/g')$'\t'$mu$'\t'$(echo ${sampling_rate[@]} |sed 's/ /,/g')$'\t'\
+		$(echo ${beta_over_N[@]}|sed 's/ /,/g')$'\t'$mu$'\t'$(echo ${sampling_rate[@]} |sed 's/ /,/g')$'\t'\
 		$MAX_TIPS$'\t'$migration_rates$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0$'\t'0 >> ${OUT_PREFIX}_param_values_failed.txt
-        	unset beta
+        	unset beta_over_N
         	count=$((count + 1))
 		echo Simulation failed, parameters are recorded in the failed param file$'\n'
 		echo Total run time:$'\t'$(( SECONDS - start_time ))$'\n'
@@ -296,7 +296,7 @@ for i in $(seq $(echo $SIM_RANGE |cut -d ',' -f 1) $(echo $SIM_RANGE |cut -d ','
 		proportion_subsampled=$(echo $json_stats|cut -d ' ' -f 4)
 
 		echo sim$i$'\t'$seed$'\t'$(echo ${R_0[@]} |sed 's/ /,/g')$'\t'$(echo ${S_0[@]}|sed 's/ /,/g')$'\t'\
-		$(echo ${beta[@]}|sed 's/ /,/g')$'\t'$mu$'\t'$(echo ${sampling_rate[@]} |sed 's/ /,/g')$'\t'\
+		$(echo ${beta_over_N[@]}|sed 's/ /,/g')$'\t'$mu$'\t'$(echo ${sampling_rate[@]} |sed 's/ /,/g')$'\t'\
 		$max_tips$'\t'$migration_scale$'\t'$tree_length$'\t'$num_tips$'\t'\
 		$($scripts_dir/get_mean_branchlength.sh ${OUT_PREFIX}_sim${i}_rep0*.newick)$'\t'\
 		${json_stats}$'\t'$NUM_EXTANT_SAMPLED |sed -r 's/[ \t]+/\t/g' >> ${OUT_PREFIX}_param_values.txt
@@ -310,7 +310,7 @@ for i in $(seq $(echo $SIM_RANGE |cut -d ',' -f 1) $(echo $SIM_RANGE |cut -d ','
 		rm ${OUT_PREFIX}_sim${i}.nexus
 	fi
 
-	unset beta
+	unset beta_over_N
 	count=$((count + 1))
 
 	# generate .cblv of simulation
