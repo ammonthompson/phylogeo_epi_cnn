@@ -20,3 +20,4 @@ MASTER/output_sims/**
 **/*.ci
 **/*.lib.bib
 **/*.tar
+**/*.tar.gz
