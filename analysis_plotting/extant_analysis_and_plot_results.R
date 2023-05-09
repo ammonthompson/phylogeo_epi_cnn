@@ -21,9 +21,9 @@ make_runtime_scatter_plots(extant_phylocomp_runtimes,
                            file_prefix = paste0(figure_relative_dir, "jpeg_files/phylocomp_runtimes"))
 
 extant_phylocomp_coverage = read.table("../neural_network_dev/data_files/extant_phylocomp_coverage.txt", header = T, row.names =1)
-make_coverage_plot(extant_phylocomp_coverage, file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_phylocomp_coverage"), 
-                   n = nrow(extant_labels))
-
+cnn_phylocomp_coverage = read.table("../neural_network_dev/data_files/cnn_coverage.tsv", header =T, row.names = 1) / 100
+make_coverage_figure(extant_phylocomp_coverage, cnn_phylocomp_coverage, file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_phylocomp_coverage"), 
+                     n = nrow(extant_labels), title = c("Bayesian coverage", "CNN coverage"))
 
 ########## misspect extant R0 ###############
 extant_miss_R0_cnn_preds = read.table("../neural_network_dev/output/misspec_R0_cnn_preds.tsv", header = T, row.names = NULL)
@@ -72,10 +72,14 @@ nadeau2021_cnn_pred = read.table("../neural_network_dev/output/mtbd_nadeau2021_c
 nadeau2021_R0_log = read.table("../real_data_analysis/nadeau2021_deathdelay_europe_clade_demeR0.log", header = T, row.names =1)
 nadeau2021_root = c(0.3, 0.01, 0.45, 0.23, 0.01) # see text from Nadeau et al. 2021
 
+nadeau2021_cnn_ci = read.table("../neural_network_dev/output/nadeau2021_mtbd_95ci.tsv", header =T, row.names = 1)
+
 locations = c("Hubei", "France", "Germany", "Italy", "Other Eur.")
 nadeau2021_R0_log = nadeau2021_R0_log[,c(3,1,2,4,5)]
 
-make_mtbd_nadeau_plots(nadeau2021_cnn_pred, nadeau2021_R0_log, nadeau2021_root, 
+make_mtbd_nadeau_plots(nadeau2021_cnn_pred, nadeau2021_R0_log, 
+                       nadeau2021_cnn_ci[,1:2], nadeau2021_cnn_ci[,3:4],
+                       nadeau2021_root, 
                        file_prefix =paste0(figure_relative_dir, 
                                            "jpeg_files/nadeau2021_mtbd_compare"))
 

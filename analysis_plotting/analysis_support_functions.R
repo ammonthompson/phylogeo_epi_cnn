@@ -308,6 +308,15 @@ make_root_location_plots <- function(cnn_pred, phylo_pred, labels,
   
 }
 
+make_coverage_figure <- function(phylo_coverage, cnn_coverage, file_prefix, n, title = c("","")){
+  jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
+       res = 400, width = 0.95*fig_scale, height = 0.5*fig_scale)
+  layout(matrix(seq(2), ncol=2))
+  make_coverage_plot(phylo_coverage, file_prefix = file_prefix, n=n, title = title[1])
+  make_coverage_plot(cnn_coverage, file_prefix = file_prefix, n=n, title = title[2] )
+  dev.off()
+}
+
 make_runtime_scatter_plots <- function(phylo_runtime_numtips_treesize,  
                                        sim_cpu_hours = 1498,
                                        cnn_training_cpu_hours = 2,
@@ -370,30 +379,25 @@ make_qqplots <- function(cnn_pred, phylo_pred, file_prefix = NULL){
 }
 
 make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
-                               n = 100,pcolor = c("blue", "orange", "red"), 
+                               n = 100,pcolor = c("blue", "orange", "red"), title = "",
                                plegend = c(expression("R"[0]), expression(delta), "m"), file_prefix = NULL){
   
 
-  # pdf(paste0(file_prefix, ".pdf"), width = 0.5 * fig_scale, height = 0.6 * fig_scale)
-  jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
-       res = 400, width = 0.5*fig_scale, height = 0.6*fig_scale)
-  
   boxplot(t(coverage), border ="white", col = "white", xlim = c(0.5, length(hpd) + 0.5), ylim = c(0,1),
-          ylab = "observed", xlab= "expected", names = hpd)
-  
+          ylab = "observed", xlab= "expected", names = hpd, main = title)
+
+  # coverage ~ beta((n+1)q, n-(n+1)q+1)
   sapply(seq(hpd), function(x){
-    bsd = 1.96 * sqrt(hpd[x] * (1 - hpd[x]) / n)
-    polygon(c(x-0.5, x+0.5, x+0.5, x-0.5), 
-            c(hpd[x] - bsd, hpd[x] - bsd, hpd[x] + bsd, hpd[x] + bsd), 
-            col = rgb(0,0,0,0.1), border = NA)
+    ci = qbeta(c(0.025,0.975), (n-1)*hpd[x], n - (n+1)*hpd[x] + 1)
+    polygon(c(x-0.5, x+0.5, x+0.5, x-0.5), c(ci[1], ci[1], ci[2], ci[2]), col = rgb(0,0,0,0.1), border = NA)
   })
   lines(seq(length(hpd)+1)-0.5, c(hpd, rev(hpd)[1]), type = "s")
   sapply(seq(ncol(coverage)), function(x) points(seq(hpd) + runif(hpd, -0.02,0.02), lwd = 1.75,
                                     cex = 1.25, coverage[,x], col = pcolor[x]))
   legend(0.4, 1, legend = plegend, fill = c(pcolor, "red"), cex = 0.75, bty = "n", border = "white")
 
-  dev.off()
 }
+
 
 make_change_in_error_boxplots <- function(true_cnn_pred, true_phylo_pred,
                                           mispec_cnn_pred, mispec_phylo_pred,   
@@ -556,15 +560,15 @@ make_ess_plot <- function(ess, cnn_ape, phylo_ape, file_prefix = NULL){
 }
 
 
-make_mtbd_nadeau_plots <- function(cnn, nad_rate_post, nad_root_post, 
+make_mtbd_nadeau_plots <- function(cnn, nad_rate_post, full_R0_q, a2_R0_q, nad_root_post, 
                                    file_prefix = NULL){
   
   locations = c("Hubei", "France", "Germany", "Italy", "Other Eur.")
   
   if(!is.null(file_prefix)) jpeg(paste0(file_prefix, ".jpeg"), units = "in", 
                                  quality = 100, res = 400, width = 0.85*fig_scale, 
-                                height = 0.5 * fig_scale)
-
+                                 height = 0.5 * fig_scale)
+  
   omar = par("mar")
   nmar = omar
   nmar[2] = nmar[2]+0.25
@@ -572,16 +576,18 @@ make_mtbd_nadeau_plots <- function(cnn, nad_rate_post, nad_root_post,
   layout(cbind(c(1,1),c(1,1),c(1,1),c(2,3),c(2,3)))
   vioplot(nadeau2021_R0_log, border = NA, col = rgb(1, 0.66, 0, 0.8), cex.axis =1.0, 
           cex.names = 1.0, names = locations, ylab = expression("R"[0]), 
-          ylim = c(0.5, 4.25), cex.lab = 1.5, rectCol="orange")
+          ylim = c(0.25, 6), cex.lab = 1.5, rectCol="orange")
   par("mar" = omar)
   
-  points(seq(5), cnn[1,1:5], col = rgb(0,0,1,1), pch = 1, lwd = 2, cex = 2)
-  points(seq(5), cnn[2,1:5], col = rgb(0,0,1,1), pch = 4, lwd = 2, cex = 2)
+  points(seq(5)+0.15, cnn[1,1:5], col = rgb(0,0,1,1), pch = 1, lwd = 2, cex = 2)
+  points(seq(5)+0.25, cnn[2,1:5], col = rgb(0,0,1,1), pch = 4, lwd = 2, cex = 2)
+  arrows(x0 = seq(5)+0.15, y0 = full_R0_q[,1], y1 = full_R0_q[,2], length = 0, col = "blue")
+  arrows(x0 = seq(5)+0.25, y0 = a2_R0_q[,1], y1 = a2_R0_q[,2], length = 0, col = "blue")
   
   #legend
-  points(c(0.5, 0.5, 0.5), c(4.2, 4, 3.8), pch = c(15, 1, 4), col = c("orange", "blue", "blue"), 
+  points(c(0.5, 0.5, 0.5), c(4.2, 4, 3.8)+1.75, pch = c(15, 1, 4), col = c("orange", "blue", "blue"), 
          cex = 2, lwd = c(1, 3, 3))
-  text(c(0.5, 0.5), c(4.2, 4, 3.8), pos = 4, offset = 0.75, cex = 1.0,
+  text(c(0.5, 0.5), c(4.2, 4, 3.8)+1.75, pos = 4, offset = 0.75, cex = 1.0,
        labels = c("Nadeau et al. 2021 posterior", "CNN Full Tree", "CNN A2 Clade"))
   
   
@@ -594,6 +600,7 @@ make_mtbd_nadeau_plots <- function(cnn, nad_rate_post, nad_root_post,
   if(!is.null(file_prefix)) dev.off()
   
 }
+
 
 
 numerical_sim_SIR <- function(gamma, beta, 
