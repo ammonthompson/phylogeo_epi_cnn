@@ -17,7 +17,7 @@ MASTER/output_sims/**
 **/*.printscreen
 **/tree_encoding/cblv_files/
 **/neural_network_dev/data_files/
-**/*.ci
+
 **/*.lib.bib
 **/*.tar
 **/*.tar.gz
