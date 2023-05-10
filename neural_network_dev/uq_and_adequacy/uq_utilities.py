@@ -41,12 +41,11 @@ def get_lowess_CI(meanx, local_std_dev, percent_CI = 50):
     alpha = 1 - (percent_CI / 100)
     z = sp.norm.ppf(1 - (alpha / 2))
     return [((meanx[x] - z * local_std_dev[x], meanx[x] + z * local_std_dev[x])) for x in range(len(meanx))]
-
-
-def fit_lowess_with_local_quantiles(x, y, frac=0.1, inner_quantile=0.95, method = "normal"):
-    # Fit lowess to the data
+   
+def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
+    # Fit using residuals around CNN predictions rather than LOWESS
     sorted_idx = np.argsort(x)
-    smoothed = lowess(y[sorted_idx], x[sorted_idx], frac=frac)
+    #smoothed = lowess(y[sorted_idx], x[sorted_idx], frac=frac)
     
     xx = x[sorted_idx]
     yy = y[sorted_idx]
@@ -55,25 +54,27 @@ def fit_lowess_with_local_quantiles(x, y, frac=0.1, inner_quantile=0.95, method 
     upper_q = 1 - lower_q
     local_lower_q = []  
     local_upper_q = []
-    for i in range(len(x)):
-        # Perform a local gaussian weighted linear regression on the local data sd
-        window_indices = np.abs(xx - xx[i]) <= (frac * (xx[-1] - xx[0])) / 2
+    
+    xvals = np.linspace(xx[0], xx[-1], 5000 )
+    for i in xvals:
+        # get frac total window
+        window_indices = np.abs(xx - i) <= (frac * (xx[-1] - xx[0])) / 2
         window_x = xx[window_indices]
         window_y = yy[window_indices]
-        residuals = window_y - smoothed[window_indices,1]
-        local_lower_q.append(smoothed[i,1] + np.array(np.quantile(residuals, lower_q)))
-        local_upper_q.append(smoothed[i,1] + np.array(np.quantile(residuals, upper_q)))
+        residuals = window_y - window_x
+        local_lower_q.append(i + np.array(np.quantile(residuals, lower_q)))
+        local_upper_q.append(i + np.array(np.quantile(residuals, upper_q)))
         np.quantile
     local_lower_q = np.array(local_lower_q)
     local_upper_q = np.array(local_upper_q)
 
     # Create functions to interpolate the lowess fits for out-of-sample values
-    smoothed_func = interp1d(smoothed[:, 0], smoothed[:, 1], kind='linear', fill_value='extrapolate')
-    smoothed_lower_local_q = interp1d(smoothed[:,0], local_lower_q, kind='linear', fill_value='extrapolate')
-    smoothed_upper_local_q = interp1d(smoothed[:,0], local_upper_q, kind='linear', fill_value='extrapolate')
+    smoothed_func = interp1d(xvals, xvals, kind='linear', fill_value='extrapolate')
+    smoothed_lower_local_q = interp1d(xvals, local_lower_q, kind='linear', fill_value='extrapolate')
+    smoothed_upper_local_q = interp1d(xvals, local_upper_q, kind='linear', fill_value='extrapolate')
 
     return smoothed_func, smoothed_lower_local_q, smoothed_upper_local_q
-
+    
     
 def plot_lowess_fit_quantile(x, y, mean_smooth_f, lower_q_smooth_f, upper_q_smooth_f):
     lspace = np.linspace(np.min(x), np.max(x), 100)
@@ -108,4 +109,38 @@ def percentage_within_intervals(intervals, true_values):
             
     percentage = count / len(intervals) * 100
     return percentage
+
+
+
+# Not used #
+def fit_lowess_with_local_quantiles(x, y, frac=0.1, inner_quantile=0.95):
+    # Fit lowess to the data
+    sorted_idx = np.argsort(x)
+    smoothed = lowess(y[sorted_idx], x[sorted_idx], frac=1)
+    
+    xx = x[sorted_idx]
+    yy = y[sorted_idx]
+    
+    lower_q = (1-inner_quantile)/2
+    upper_q = 1 - lower_q
+    local_lower_q = []  
+    local_upper_q = []
+    for i in range(len(x)):
+        # Perform a local gaussian weighted linear regression on the local data sd
+        window_indices = np.abs(xx - xx[i]) <= (frac * (xx[-1] - xx[0])) / 2
+        window_x = xx[window_indices]
+        window_y = yy[window_indices]
+        residuals = window_y - smoothed[window_indices,1]
+        local_lower_q.append(smoothed[i,1] + np.array(np.quantile(residuals, lower_q)))
+        local_upper_q.append(smoothed[i,1] + np.array(np.quantile(residuals, upper_q)))
+        np.quantile
+    local_lower_q = np.array(local_lower_q)
+    local_upper_q = np.array(local_upper_q)
+
+    # Create functions to interpolate the lowess fits for out-of-sample values
+    smoothed_func = interp1d(smoothed[:, 0], smoothed[:, 1], kind='linear', fill_value='extrapolate')
+    smoothed_lower_local_q = interp1d(smoothed[:,0], local_lower_q, kind='linear', fill_value='extrapolate')
+    smoothed_upper_local_q = interp1d(smoothed[:,0], local_upper_q, kind='linear', fill_value='extrapolate')
+
+    return smoothed_func, smoothed_lower_local_q, smoothed_upper_local_q
 

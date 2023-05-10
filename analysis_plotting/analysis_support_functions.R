@@ -93,7 +93,8 @@ plot_error_as_function_numtips <- function(cnn_ape, phylo_ape, ref_ape, cnnphylo
 
 
 # figure making
-make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix = NULL){
+make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix = NULL, 
+                                   phy_coverage = rep(0.95,3), cnn_coverage = rep(0.95,3)){
   
   cnn_rates = cnn_preds[,1:3]
   phylo_rates = phylo_preds[,1:3]
@@ -111,7 +112,8 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   layout(grid, widths = c(1,1,1,1))
   
   
-  make_scatter_plot(cnn_rates, phylo_rates, rates_labels, set_layout = FALSE, panel_label = TRUE)
+  make_scatter_plot(cnn_rates, phylo_rates, rates_labels, set_layout = FALSE, panel_label = TRUE, 
+                    phylo_coverage = phy_coverage, cnn_coverage = cnn_coverage)
   
   make_error_difference_boxplot(cnn_rates, phylo_rates, rates_labels, panel_label = TRUE)
   
@@ -125,7 +127,8 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
 }
 
 make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = NULL, file_type = "pdf",
-                              panel_label = FALSE, set_layout = TRUE, phylo_row_main_names = NULL){
+                              panel_label = FALSE, set_layout = TRUE, phylo_row_main_names = NULL, 
+                              phylo_coverage=rep("",3), cnn_coverage=rep("",3)){
   
   if(is.null(phylo_row_main_names)) phylo_row_main_names = c(expression("R"["0"]),  expression(delta[""]), expression("m"[""]))
   
@@ -152,10 +155,17 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
   
   for(i in seq(ncol(cnn_pred))){
     if(!is.null(label)){
+      
+      # CNN scatterplots
+      xlim = c(min(cnn_pred[,i]), max(cnn_pred[,i]))
+      ylim = c(min(label[,i]), max(label[,i]))
       ylabel = ifelse((i == 1), "True value", "")
-      plot(cnn_pred[,i], label[,i], xlab = "CNN Prediction", ylab = ylabel,
+      plot(cnn_pred[,i], label[,i], xlab = "CNN Prediction", ylab = ylabel, xlim = xlim, ylim = ylim,
            main = phylo_row_main_names[i], pch = 16, col = rgb(0,0,1,0.8), cex.main = 1.75, cex.lab = 1.25)
       abline(0,1,col = "black")
+      text(xlim[1], 0.98*ylim[2], labels = round(cnn_coverage[i], digits = 2), pos = 4, cex = 1.25) # experimental
+      
+      # panel label
       if(i == 1 & panel_label == TRUE){
         pplt <- par("plt")
         adjx <- (0 - pplt[1]) / (pplt[2] - pplt[1])
@@ -163,9 +173,14 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
         mtext("A", side = 3, cex = 1.5, adj = adjx, line = liney)
       }
       
-      plot(phylo_pred[,i], label[,i], xlab = "Mean Posterior Estimate", ylab = ylabel,
-           main = "", pch = 16, col = rgb(1,0,0,0.8), cex.lab = 1.25)
+      #Phylo scatterplots
+      xlim = c(min(phylo_pred[,i]), max(phylo_pred[,i]))
+      ylim = c(min(label[,i]), max(label[,i]))
+      plot(phylo_pred[,i], label[,i], xlab = "Mean Posterior Estimate", ylab = ylabel, 
+           xlim = xlim, ylim = ylim, main = "", pch = 16, col = rgb(1,0,0,0.8), cex.lab = 1.25)
       abline(0,1,col = "black")
+      text(xlim[1], 0.98*ylim[2], labels = round(phylo_coverage[i], digits = 2), pos = 4,  cex = 1.25) # experimental
+      
       
     }
     ylabel = ifelse((i == 1), "Mean Posterior Estimate", "")
@@ -298,10 +313,10 @@ make_root_location_plots <- function(cnn_pred, phylo_pred, labels,
   axis(2, at = yaxis_tick_locs, labels = abs(yaxis_tick_locs))
   abline(h=0, col = rgb(0,0,0,0.5))
   
-  legend(0.0, 0.75 * bothmax,legend = paste0("Avg. CNN accuracy = ", round(mean(cnn_acc), digits = 2)),
-         fill = "blue", border = "white", bty = 'n', cex = 0.8, yjust = 0)
-  legend(0.0, -0.75 * bothmax,legend = paste0("Avg. Post. mean accuracy = ", round(mean(phylo_acc), digits = 2)),
-         fill = "red", border = "white", bty = 'n', cex = 0.8, yjust = 1)
+  legend(-0.075, 0.8 * bothmax,legend = paste0("Avg. CNN acc. = ", round(mean(cnn_acc), digits = 2)),
+         fill = "blue", border = "white", bty = 'n', cex = 0.95, yjust = 0)
+  legend(-0.075, -0.8 * bothmax,legend = paste0("Avg. Post. mean acc. = ", round(mean(phylo_acc), digits = 2)),
+         fill = "red", border = "white", bty = 'n', cex = 0.95, yjust = 1)
   par("mar" = old_mar)
   
   if(!is.null(file_prefix)) dev.off()

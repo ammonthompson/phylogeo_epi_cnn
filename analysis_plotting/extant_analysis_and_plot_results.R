@@ -13,87 +13,101 @@ figure_relative_dir = "figures/"
 extant_cnn = read.table("../neural_network_dev/output/extant_cnn_preds.tsv", header = T, row.names = NULL)
 extant_phylo = read.table("../neural_network_dev/output/extant_phylo_means.tsv", header  = T, row.names = NULL)
 extant_labels = read.table("../neural_network_dev/output/extant_labels.tsv", header = T, row.names = NULL)
-make_experiment_figure(extant_cnn, extant_phylo, extant_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_figure"))
-
 extant_phylocomp_runtimes = read.table("../neural_network_dev/output/extant_phylocomp_runtimes.tsv", header = T, row.names = 1)
-make_runtime_scatter_plots(extant_phylocomp_runtimes, 
-                           file_prefix = paste0(figure_relative_dir, "jpeg_files/phylocomp_runtimes"))
-
 extant_phylocomp_coverage = read.table("../neural_network_dev/data_files/extant_phylocomp_coverage.txt", header = T, row.names =1)
 cnn_phylocomp_coverage = read.table("../neural_network_dev/data_files/cnn_coverage.tsv", header =T, row.names = 1) / 100
 make_coverage_figure(extant_phylocomp_coverage, cnn_phylocomp_coverage, file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_phylocomp_coverage"), 
                      n = nrow(extant_labels), title = c("Bayesian coverage", "CNN coverage"))
 
+make_experiment_figure(extant_cnn, extant_phylo, extant_labels, 
+                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_figure"),
+                      phy_coverage = extant_phylocomp_coverage[7,], cnn_phylocomp_coverage[7,])
+
+make_runtime_scatter_plots(extant_phylocomp_runtimes, 
+                           file_prefix = paste0(figure_relative_dir, "jpeg_files/phylocomp_runtimes"))
+
+
 ########## misspect extant R0 ###############
 extant_miss_R0_cnn_preds = read.table("../neural_network_dev/output/misspec_R0_cnn_preds.tsv", header = T, row.names = NULL)
 extant_miss_R0_phylo_preds = read.table("../neural_network_dev/output/misspec_R0_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_R0_labels = read.table("../neural_network_dev/output/misspec_R0_labels.tsv", header = T, row.names= NULL)
-make_experiment_figure(extant_miss_R0_cnn_preds, extant_miss_R0_phylo_preds, extant_miss_R0_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_R0_figure"))
 
 extant_miss_R0_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_R0_coverage_report.txt", header = T, row.names = 1)
 cnn_miss_R0_coverage = read.table("../neural_network_dev/data_files/missR0_cnn_coverage.tsv", header = T, row.names = 1) / 100
+
 make_coverage_figure(extant_miss_R0_phylo_coverage, cnn_miss_R0_coverage, 
                      file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_miss_R0_coverage"),
                      n = nrow(extant_miss_R0_labels), title = c("Bayesian coverage", "CNN coverage"))
+
+make_experiment_figure(extant_miss_R0_cnn_preds, extant_miss_R0_phylo_preds, extant_miss_R0_labels, 
+                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_R0_figure"),
+                       phy_coverage = extant_miss_R0_phylo_coverage[7,], cnn_coverage = cnn_miss_R0_coverage[7,])
 
 
 ########## misspect extant delta ###############
 extant_miss_delta_cnn_preds = read.table("../neural_network_dev/output/misspec_delta_cnn_preds.tsv", header = T, row.names = NULL)
 extant_miss_delta_phylo_preds = read.table("../neural_network_dev/output/misspec_delta_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_delta_labels = read.table("../neural_network_dev/output/misspec_delta_labels.tsv", header = T, row.names= NULL)
-make_experiment_figure(extant_miss_delta_cnn_preds, extant_miss_delta_phylo_preds, extant_miss_delta_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_delta_figure"))
 
 extant_miss_delta_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_delta_coverage_report.txt", header = T, row.names = 1)
 cnn_miss_delta_coverage = read.table("../neural_network_dev/data_files/missDelta_cnn_coverage.tsv", header = T, row.names = 1) / 100
+
 make_coverage_figure(extant_miss_delta_phylo_coverage, cnn_miss_delta_coverage, 
                      file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_miss_delta_coverage"),
                      n = nrow(extant_miss_delta_labels), title = c("Bayesian coverage", "CNN coverage"))
 
+make_experiment_figure(extant_miss_delta_cnn_preds, extant_miss_delta_phylo_preds, extant_miss_delta_labels, 
+                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_delta_figure"),
+                       phy_coverage = extant_miss_delta_phylo_coverage[7,], cnn_coverage = cnn_miss_delta_coverage[7,])
 
 ########## misspect extant m ###############
 extant_miss_m_cnn_preds = read.table("../neural_network_dev/output/misspec_migration_cnn_preds.tsv", header = T, row.names = NULL)
 extant_miss_m_phylo_preds = read.table("../neural_network_dev/output/misspec_migration_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_m_labels = read.table("../neural_network_dev/output/misspec_migration_labels.tsv", header = T, row.names= NULL)
-make_experiment_figure(extant_miss_m_cnn_preds, extant_miss_m_phylo_preds, extant_miss_m_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_m_figure"))
 
 extant_miss_m_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_m_coverage_report.txt", header = T, row.names = 1)
 cnn_miss_m_coverage = read.table("../neural_network_dev/data_files/missM_cnn_coverage.tsv", header = T, row.names = 1) / 100
+
 make_coverage_figure(extant_miss_m_phylo_coverage, cnn_miss_m_coverage, 
                      file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_miss_m_coverage"),
                      n = nrow(extant_miss_m_labels), title = c("Bayesian coverage", "CNN coverage"))
 
+make_experiment_figure(extant_miss_m_cnn_preds, extant_miss_m_phylo_preds, extant_miss_m_labels, 
+                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_m_figure"),
+                       phy_coverage = extant_miss_m_phylo_coverage[7,], cnn_coverage = cnn_miss_m_coverage[7,])
 
 ########## extant misspec numloc ###############
 extant_miss_numloc_cnn_preds = read.table("../neural_network_dev/output/misspec_numloc_cnn_preds.tsv", header = T, row.names = NULL)
 extant_miss_numloc_phylo_preds = read.table("../neural_network_dev/output/misspec_numloc_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_numloc_labels = read.table("../neural_network_dev/output/misspec_numloc_labels.tsv", header = T, row.names = NULL)
-make_experiment_figure(extant_miss_numloc_cnn_preds, extant_miss_numloc_phylo_preds, extant_miss_numloc_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_numloc_figure"))
 
 extant_miss_numloc_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_numloc_coverage_report.txt", header = T, row.names = 1)
 cnn_miss_numloc_coverage = read.table("../neural_network_dev/data_files/missNumLoc_cnn_coverage.tsv", header = T, row.names = 1) / 100
+
 make_coverage_figure(extant_miss_numloc_phylo_coverage, cnn_miss_numloc_coverage, 
                      file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_miss_numloc_coverage"),
                      n = nrow(extant_miss_numloc_labels), title = c("Bayesian coverage", "CNN coverage"))
 
+make_experiment_figure(extant_miss_numloc_cnn_preds, extant_miss_numloc_phylo_preds, extant_miss_numloc_labels, 
+                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_numloc_figure"),
+                       phy_coverage = extant_miss_numloc_phylo_coverage[7,], cnn_coverage = cnn_miss_numloc_coverage[7,])
 
 ######### misspec tree ###################
 extant_miss_tree_cnn = read.table("../neural_network_dev/output/misspec_tree_cnn_preds.tsv", header = T, row.names =NULL)
 extant_miss_tree_phylo = read.table("../neural_network_dev/output/misspec_tree_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_tree_labels = read.table("../neural_network_dev/output/misspec_tree_labels.tsv", header = T, row.names = NULL)
 extant_miss_tree_robfoulds = read.table("../neural_network_dev/data_files/extant_misspec_tree_proportion_branches_shared.tsv", header = F, row.names = 1)
-make_experiment_figure(extant_miss_tree_cnn, extant_miss_tree_phylo, extant_miss_tree_labels,
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_tree_figure"))
 
 extant_miss_tree_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_tree_coverage_report.txt", header = T, row.names = 1)
 cnn_miss_tree_coverage = read.table("../neural_network_dev/data_files/missTree_cnn_coverage.tsv", header = T, row.names = 1) / 100
-make_coverage_figure(extant_miss_numloc_phylo_coverage, cnn_miss_numloc_coverage, 
+
+make_coverage_figure(extant_miss_tree_phylo_coverage, cnn_miss_tree_coverage, 
                      file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_miss_tree_coverage"),
                      n = nrow(extant_miss_tree_labels), title = c("Bayesian coverage", "CNN coverage"))
+
+make_experiment_figure(extant_miss_tree_cnn, extant_miss_tree_phylo, extant_miss_tree_labels,
+                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_tree_figure"),
+                       phy_coverage = extant_miss_tree_phylo_coverage[7,], cnn_coverage = cnn_miss_tree_coverage[7,])
 
 quantile(extant_miss_tree_robfoulds[,1], p = c(0.025, 0.5, 0.975))
 
