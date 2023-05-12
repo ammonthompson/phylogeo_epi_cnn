@@ -14,8 +14,10 @@ extant_cnn = read.table("../neural_network_dev/output/extant_cnn_preds.tsv", hea
 extant_phylo = read.table("../neural_network_dev/output/extant_phylo_means.tsv", header  = T, row.names = NULL)
 extant_labels = read.table("../neural_network_dev/output/extant_labels.tsv", header = T, row.names = NULL)
 extant_phylocomp_runtimes = read.table("../neural_network_dev/output/extant_phylocomp_runtimes.tsv", header = T, row.names = 1)
+
 extant_phylocomp_coverage = read.table("../neural_network_dev/data_files/extant_phylocomp_coverage.txt", header = T, row.names =1)
 cnn_phylocomp_coverage = read.table("../neural_network_dev/data_files/cnn_coverage.tsv", header =T, row.names = 1) / 100
+
 make_coverage_figure(extant_phylocomp_coverage, cnn_phylocomp_coverage, file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_phylocomp_coverage"), 
                      n = nrow(extant_labels), title = c("Bayesian coverage", "CNN coverage"))
 
