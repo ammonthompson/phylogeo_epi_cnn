@@ -9,6 +9,22 @@ from scipy.interpolate import interp1d
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+    
+    # get coverage statistics
+def percentage_within_intervals(intervals, true_values):
+    if len(intervals) != len(true_values):
+        raise ValueError("Length of intervals and true_values must be equal")
+    
+    count = 0
+    for i, (lower, upper) in enumerate(intervals):
+        if lower <= true_values[i] <= upper:
+            count += 1
+            
+    percentage = count / len(intervals) * 100
+    return percentage
+
+
 def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95], q_fun = None):
     ''' x_train (array-like): The training data for input features.
         y_train (array-like): The training data for target labels.
@@ -26,7 +42,7 @@ def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 
         if q_fun is not None:
             f_lq, f_uq = q_fun[quantiles[q]]
         else:
-            f_m, f_lq, f_uq = fit_lowess_with_local_quantiles(x_train, y_train, frac=0.1, inner_quantile=quantiles[q])
+            f_m, f_lq, f_uq = get_CPI(x_train, y_train, frac=0.1, inner_quantile=quantiles[q])
         i_lower_q = f_lq(x_test)
         i_upper_q = f_uq(x_test)
         i_ci = []
@@ -37,11 +53,7 @@ def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 
         print(str(quantiles[q]) + " finished: " + str(cov_q[-1]))
     return cov_q
 
-def get_lowess_CI(meanx, local_std_dev, percent_CI = 50):
-    alpha = 1 - (percent_CI / 100)
-    z = sp.norm.ppf(1 - (alpha / 2))
-    return [((meanx[x] - z * local_std_dev[x], meanx[x] + z * local_std_dev[x])) for x in range(len(meanx))]
-   
+
 def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
     # Fit using residuals around CNN predictions rather than LOWESS
     sorted_idx = np.argsort(x)
@@ -96,23 +108,13 @@ def plot_lowess_fit_quantile(x, y, mean_smooth_f, lower_q_smooth_f, upper_q_smoo
     plt.ylabel("y")
     plt.legend()
     plt.show()
+
     
-    # get coverage statistics
-def percentage_within_intervals(intervals, true_values):
-    if len(intervals) != len(true_values):
-        raise ValueError("Length of intervals and true_values must be equal")
     
-    count = 0
-    for i, (lower, upper) in enumerate(intervals):
-        if lower <= true_values[i] <= upper:
-            count += 1
-            
-    percentage = count / len(intervals) * 100
-    return percentage
-
-
-
+    
+############    
 # Not used #
+############
 def fit_lowess_with_local_quantiles(x, y, frac=0.1, inner_quantile=0.95):
     # Fit lowess to the data
     sorted_idx = np.argsort(x)
@@ -144,3 +146,8 @@ def fit_lowess_with_local_quantiles(x, y, frac=0.1, inner_quantile=0.95):
 
     return smoothed_func, smoothed_lower_local_q, smoothed_upper_local_q
 
+def get_lowess_CI(meanx, local_std_dev, percent_CI = 50):
+    alpha = 1 - (percent_CI / 100)
+    z = sp.norm.ppf(1 - (alpha / 2))
+    return [((meanx[x] - z * local_std_dev[x], meanx[x] + z * local_std_dev[x])) for x in range(len(meanx))]
+   

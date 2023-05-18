@@ -163,7 +163,9 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
       plot(cnn_pred[,i], label[,i], xlab = "CNN Prediction", ylab = ylabel, xlim = xlim, ylim = ylim,
            main = phylo_row_main_names[i], pch = 16, col = rgb(0,0,1,0.8), cex.main = 1.75, cex.lab = 1.25)
       abline(0,1,col = "black")
-      text(xlim[1], 0.98*ylim[2], labels = round(cnn_coverage[i], digits = 2), pos = 4, cex = 1.25) # experimental
+      text(xlim[1], 0.98*ylim[2], labels = paste0("Corr.: ", round(cor(cnn_pred[,i], label[,i]), digits = 2)), pos = 4, cex = 1.25) # experimental
+      text(0.99 * xlim[2], 1.02*ylim[1], labels = paste0("Coverage: ", round(cnn_coverage[i], digits = 2)), pos = 2, cex = 1.25) # experimental
+      # text(xlim[1], 0.98*ylim[2], labels = round(cnn_coverage[i], digits = 2), pos = 4, cex = 1.25) # experimental
       
       # panel label
       if(i == 1 & panel_label == TRUE){
@@ -179,15 +181,22 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
       plot(phylo_pred[,i], label[,i], xlab = "Mean Posterior Estimate", ylab = ylabel, 
            xlim = xlim, ylim = ylim, main = "", pch = 16, col = rgb(1,0,0,0.8), cex.lab = 1.25)
       abline(0,1,col = "black")
-      text(xlim[1], 0.98*ylim[2], labels = round(phylo_coverage[i], digits = 2), pos = 4,  cex = 1.25) # experimental
+      text(xlim[1], 0.98*ylim[2], labels = paste0("Corr.: ", round(cor(phylo_pred[,i], label[,i]), digits = 2)), pos = 4, cex = 1.25) # experimental
+      text(0.99*xlim[2], 1.02*ylim[1], labels = paste0("Coverage: ", round(phylo_coverage[i], digits = 2)), pos = 2, cex = 1.25) # experimental
+      # text(xlim[1], 0.98*ylim[2], labels = round(phylo_coverage[i], digits = 2), pos = 4,  cex = 1.25) # experimental
       
       
     }
     ylabel = ifelse((i == 1), "Mean Posterior Estimate", "")
     
+    xlim = c(min(cnn_pred[,i]), max(cnn_pred[,i]))
+    ylim = c(min(phylo_pred[,i]), max(phylo_pred[,i]))
+    
     plot(cnn_pred[,i], phylo_pred[,i], xlab = "CNN Prediction", ylab = ylabel,
-         main = "", pch = 16, col = "orange", cex.lab = 1.25)
+         xlim = xlim, ylim = ylim, main = "", pch = 16, col = "orange", cex.lab = 1.25)
     abline(0,1,col = "black")
+    text(xlim[1], 0.98*ylim[2], labels = paste0("Corr.: ", round(cor(cnn_pred[,i], phylo_pred[,i]), digits = 2)), pos = 4, cex = 1.25) # experimental
+    
   }
   
   par("mar" = old_par)
