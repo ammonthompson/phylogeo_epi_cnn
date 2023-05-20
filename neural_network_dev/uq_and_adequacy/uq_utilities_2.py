@@ -76,7 +76,7 @@ def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
     upper_q = 1 - lower_q
     tree = KDTree(xx)
 
-    grid_points = 20  # Adjust this number based on your needs
+    grid_points = 50  # Adjust this number based on your needs
     xvals = [np.linspace(np.min(xx[:, i]), np.max(xx[:, i]), grid_points) for i in range(3)]
     local_lower_q = np.empty((grid_points, grid_points, grid_points))  
     local_upper_q = np.empty((grid_points, grid_points, grid_points))

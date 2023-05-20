@@ -21,9 +21,12 @@ cnn_phylocomp_coverage = read.table("../neural_network_dev/data_files/cnn_covera
 make_coverage_figure(extant_phylocomp_coverage, cnn_phylocomp_coverage, file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_phylocomp_coverage"), 
                      n = nrow(extant_labels), title = c("Bayesian coverage", "CNN coverage"))
 
+# make_experiment_figure(extant_cnn, extant_phylo, extant_labels, 
+#                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_figure"),
+#                        phy_coverage = extant_phylocomp_coverage[7,], cnn_phylocomp_coverage[7,])
 make_experiment_figure(extant_cnn, extant_phylo, extant_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_figure"),
-                      phy_coverage = extant_phylocomp_coverage[7,], cnn_phylocomp_coverage[7,])
+                       phy_coverage = extant_phylocomp_coverage, cnn_coverage = cnn_phylocomp_coverage)
 
 make_runtime_scatter_plots(extant_phylocomp_runtimes, 
                            file_prefix = paste0(figure_relative_dir, "jpeg_files/phylocomp_runtimes"))
@@ -43,7 +46,7 @@ make_coverage_figure(extant_miss_R0_phylo_coverage, cnn_miss_R0_coverage,
 
 make_experiment_figure(extant_miss_R0_cnn_preds, extant_miss_R0_phylo_preds, extant_miss_R0_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_R0_figure"),
-                       phy_coverage = extant_miss_R0_phylo_coverage[7,], cnn_coverage = cnn_miss_R0_coverage[7,])
+                       phy_coverage = extant_miss_R0_phylo_coverage, cnn_coverage = cnn_miss_R0_coverage)
 
 
 ########## misspect extant delta ###############
@@ -60,7 +63,7 @@ make_coverage_figure(extant_miss_delta_phylo_coverage, cnn_miss_delta_coverage,
 
 make_experiment_figure(extant_miss_delta_cnn_preds, extant_miss_delta_phylo_preds, extant_miss_delta_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_delta_figure"),
-                       phy_coverage = extant_miss_delta_phylo_coverage[7,], cnn_coverage = cnn_miss_delta_coverage[7,])
+                       phy_coverage = extant_miss_delta_phylo_coverage, cnn_coverage = cnn_miss_delta_coverage)
 
 ########## misspect extant m ###############
 extant_miss_m_cnn_preds = read.table("../neural_network_dev/output/misspec_migration_cnn_preds.tsv", header = T, row.names = NULL)
@@ -76,7 +79,7 @@ make_coverage_figure(extant_miss_m_phylo_coverage, cnn_miss_m_coverage,
 
 make_experiment_figure(extant_miss_m_cnn_preds, extant_miss_m_phylo_preds, extant_miss_m_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_m_figure"),
-                       phy_coverage = extant_miss_m_phylo_coverage[7,], cnn_coverage = cnn_miss_m_coverage[7,])
+                       phy_coverage = extant_miss_m_phylo_coverage, cnn_coverage = cnn_miss_m_coverage)
 
 ########## extant misspec numloc ###############
 extant_miss_numloc_cnn_preds = read.table("../neural_network_dev/output/misspec_numloc_cnn_preds.tsv", header = T, row.names = NULL)
@@ -92,7 +95,7 @@ make_coverage_figure(extant_miss_numloc_phylo_coverage, cnn_miss_numloc_coverage
 
 make_experiment_figure(extant_miss_numloc_cnn_preds, extant_miss_numloc_phylo_preds, extant_miss_numloc_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_numloc_figure"),
-                       phy_coverage = extant_miss_numloc_phylo_coverage[7,], cnn_coverage = cnn_miss_numloc_coverage[7,])
+                       phy_coverage = extant_miss_numloc_phylo_coverage, cnn_coverage = cnn_miss_numloc_coverage)
 
 ######### misspec tree ###################
 extant_miss_tree_cnn = read.table("../neural_network_dev/output/misspec_tree_cnn_preds.tsv", header = T, row.names =NULL)
@@ -109,7 +112,7 @@ make_coverage_figure(extant_miss_tree_phylo_coverage, cnn_miss_tree_coverage,
 
 make_experiment_figure(extant_miss_tree_cnn, extant_miss_tree_phylo, extant_miss_tree_labels,
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_tree_figure"),
-                       phy_coverage = extant_miss_tree_phylo_coverage[7,], cnn_coverage = cnn_miss_tree_coverage[7,])
+                       phy_coverage = extant_miss_tree_phylo_coverage, cnn_coverage = cnn_miss_tree_coverage)
 
 quantile(extant_miss_tree_robfoulds[,1], p = c(0.025, 0.5, 0.975))
 

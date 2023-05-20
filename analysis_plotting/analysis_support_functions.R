@@ -105,11 +105,28 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   root_labels = labels[,-c(1:3)]
   
   
-  if(!is.null(file_prefix)) jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
-                                 res = 400, width = 1*fig_scale, height = 0.8*fig_scale)
+  # if(!is.null(file_prefix)) jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
+  #                                res = 400, width = 1*fig_scale, height = 0.8*fig_scale)
+  # 
+  # grid = matrix(c(seq(9),10, 10, 11), ncol = 4)
+  # layout(grid, widths = c(1,1,1,1))
   
-  grid = matrix(c(seq(9),10, 10, 11), ncol = 4)
-  layout(grid, widths = c(1,1,1,1))
+  if(!is.null(file_prefix)) jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
+                                 res = 400, width = 1*fig_scale, height = 1*fig_scale)
+  
+  # grid = matrix(c(1,2,3,10,4,5,6,10,7,8,9,11,12,12,13,13), ncol = 4, nrow = 4, byrow=F)
+  
+  grid = matrix(c(1,1,2,2,3,3,10,10,
+                  1,1,2,2,3,3,10,10,
+                  4,4,5,5,6,6,10,10,
+                  4,4,5,5,6,6,10,10,
+                  7,7,8,8,9,9,10,10,
+                  7,7,8,8,9,9,10,10,
+                  12,12,12,13,13,13,11,11,
+                  12,12,12,13,13,13,11,11), ncol = 8, nrow = 8, byrow=F)
+  
+  layout(grid, widths = c(rep(1,7), 1.5), heights = c(rep(1,7), 1.5))
+  
   
   
   make_scatter_plot(cnn_rates, phylo_rates, rates_labels, set_layout = FALSE, panel_label = TRUE, 
@@ -118,6 +135,13 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   make_error_difference_boxplot(cnn_rates, phylo_rates, rates_labels, panel_label = TRUE)
   
   make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = TRUE)
+  
+  ### experiment ###
+  make_coverage_figure(phy_coverage, cnn_coverage, 
+                       file_prefix = NULL,
+                       n = nrow(cnn_preds), title = c("Bayesian coverage", "CNN coverage"),
+                       mkfig = F)
+  ##################
   
   if(! is.null(file_prefix)) dev.off()
   
@@ -163,8 +187,8 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
       plot(cnn_pred[,i], label[,i], xlab = "CNN Prediction", ylab = ylabel, xlim = xlim, ylim = ylim,
            main = phylo_row_main_names[i], pch = 16, col = rgb(0,0,1,0.8), cex.main = 1.75, cex.lab = 1.25)
       abline(0,1,col = "black")
-      text(xlim[1], 0.98*ylim[2], labels = paste0("Corr.: ", round(cor(cnn_pred[,i], label[,i]), digits = 2)), pos = 4, cex = 1.25) # experimental
-      text(0.99 * xlim[2], 1.02*ylim[1], labels = paste0("Coverage: ", round(cnn_coverage[i], digits = 2)), pos = 2, cex = 1.25) # experimental
+      text(xlim[1], 0.98*ylim[2], labels = round(cor(cnn_pred[,i], label[,i]), digits = 2), pos = 4, cex = 1.25) # experimental
+      # text(0.99 * xlim[2], 1.02*ylim[1], labels = paste0("Coverage: ", round(cnn_coverage[i], digits = 2)), pos = 2, cex = 1.25) # experimental
       # text(xlim[1], 0.98*ylim[2], labels = round(cnn_coverage[i], digits = 2), pos = 4, cex = 1.25) # experimental
       
       # panel label
@@ -181,8 +205,8 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
       plot(phylo_pred[,i], label[,i], xlab = "Mean Posterior Estimate", ylab = ylabel, 
            xlim = xlim, ylim = ylim, main = "", pch = 16, col = rgb(1,0,0,0.8), cex.lab = 1.25)
       abline(0,1,col = "black")
-      text(xlim[1], 0.98*ylim[2], labels = paste0("Corr.: ", round(cor(phylo_pred[,i], label[,i]), digits = 2)), pos = 4, cex = 1.25) # experimental
-      text(0.99*xlim[2], 1.02*ylim[1], labels = paste0("Coverage: ", round(phylo_coverage[i], digits = 2)), pos = 2, cex = 1.25) # experimental
+      text(xlim[1], 0.98*ylim[2], labels = round(cor(phylo_pred[,i], label[,i]), digits = 2), pos = 4, cex = 1.25) # experimental
+      # text(0.99*xlim[2], 1.02*ylim[1], labels = paste0("Coverage: ", round(phylo_coverage[i], digits = 2)), pos = 2, cex = 1.25) # experimental
       # text(xlim[1], 0.98*ylim[2], labels = round(phylo_coverage[i], digits = 2), pos = 4,  cex = 1.25) # experimental
       
       
@@ -195,7 +219,7 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
     plot(cnn_pred[,i], phylo_pred[,i], xlab = "CNN Prediction", ylab = ylabel,
          xlim = xlim, ylim = ylim, main = "", pch = 16, col = "orange", cex.lab = 1.25)
     abline(0,1,col = "black")
-    text(xlim[1], 0.98*ylim[2], labels = paste0("Corr.: ", round(cor(cnn_pred[,i], phylo_pred[,i]), digits = 2)), pos = 4, cex = 1.25) # experimental
+    text(xlim[1], 0.98*ylim[2], labels = round(cor(cnn_pred[,i], phylo_pred[,i]), digits = 2), pos = 4, cex = 1.25) # experimental
     
   }
   
@@ -229,19 +253,25 @@ make_error_difference_boxplot <- function(cnn_pred, phylo_pred, labels,
   
   old_mar = par("mar")
   new_mar = old_mar
-  new_mar[3] = old_mar[3] * 0.5
+  new_mar[c(1,3,4)] = old_mar[c(1,3,4)] * c(0.8, 0.25, 0.5)
   par("mar" = new_mar)
   
   dbx = boxplot(difference, range = whisker, plot = FALSE)
   upper_cutoff = 1.1 * max(abs(dbx$stats))
   lower_cutoff = -upper_cutoff 
   
-  boxplot(difference, col = "white", border = "black", main = "",
-          ylab = expression("CNN APE  " - " Post. mean APE"), outline = F, xaxt = 'n',
+  # box_x_locations = seq(length(boxnames))
+  box_x_locations = c(0.5,2,3.5)
+  
+  boxplot(difference, col = "white", border = "black", main = "", boxwex = 0.75, at = box_x_locations,
+          ylab = expression("CNN APE  " - " Post. mean APE"), outline = F, xaxt = 'n', cex.lab = 1.1,
           range = whisker, ylim = c(lower_cutoff, upper_cutoff))
   
-  axis(side =1, at = seq(length(boxnames)), labels = boxnames, 
-       tick = F, cex.axis = 1.75)
+  omg = par("mgp")
+  par(mgp = c(3,2,0))
+  axis(side =1, at = box_x_locations, labels = boxnames, 
+       tick = F, cex.axis = 1.75, cex = 1.5)
+  par(mgp = omg)
   
   abline(h=0,col = "red")
   
@@ -259,7 +289,7 @@ make_error_difference_boxplot <- function(cnn_pred, phylo_pred, labels,
   
   for(x in seq(ncol(difference))){
     outlier_idx = which(difference[,x] %in% c(lower_cutoff, upper_cutoff))
-    x_jitter = x + runif(nrow(difference), -0.25, 0.25)
+    x_jitter = box_x_locations[x] + runif(nrow(difference), -0.25, 0.25)
     points(x_jitter, difference[,x], 
            col = rgb(1, 0.65, 0, 0.75), pch = 16, cex = 0.75)
     points(x_jitter[outlier_idx], difference[outlier_idx,x],
@@ -304,7 +334,7 @@ make_root_location_plots <- function(cnn_pred, phylo_pred, labels,
   par("mar" = new_mar)
   
   plot(cnnhist, col = rgb(0,0,1,1), ylim = c(-bothmax, bothmax), main = "", border = "white", axes = F, 
-       xlab = "Pr(recovering true outbreak location)", ylab = "Num. trees")
+       xlab = "Pr(recovering true outbreak location)", ylab = "Num. trees", cex.lab = 1.2)
   
   plot(phylohist, col = rgb(1,0,0,1), add = T, border = "white")
   axis(1)
@@ -322,23 +352,25 @@ make_root_location_plots <- function(cnn_pred, phylo_pred, labels,
   axis(2, at = yaxis_tick_locs, labels = abs(yaxis_tick_locs))
   abline(h=0, col = rgb(0,0,0,0.5))
   
-  legend(-0.075, 0.8 * bothmax,legend = paste0("Avg. CNN acc. = ", round(mean(cnn_acc), digits = 2)),
-         fill = "blue", border = "white", bty = 'n', cex = 0.95, yjust = 0)
-  legend(-0.075, -0.8 * bothmax,legend = paste0("Avg. Post. mean acc. = ", round(mean(phylo_acc), digits = 2)),
-         fill = "red", border = "white", bty = 'n', cex = 0.95, yjust = 1)
+  legend(-0.075, 0.8 * bothmax, legend = paste0("Avg. CNN acc. = ", round(mean(cnn_acc), digits = 2)),
+         fill = "blue", border = "white", bty = 'n', cex = 1.2, yjust = 0)
+  legend(-0.075, -0.8 * bothmax, legend = paste0("Avg. Post. mean acc. = ", round(mean(phylo_acc), digits = 2)),
+         fill = "red", border = "white", bty = 'n', cex = 1.2, yjust = 1)
   par("mar" = old_mar)
   
   if(!is.null(file_prefix)) dev.off()
   
 }
 
-make_coverage_figure <- function(phylo_coverage, cnn_coverage, file_prefix, n, title = c("","")){
-  jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
+make_coverage_figure <- function(phylo_coverage, cnn_coverage, file_prefix, n, title = c("",""), mkfig=T){
+  if(mkfig){ 
+    jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
        res = 400, width = 0.95*fig_scale, height = 0.5*fig_scale)
-  layout(matrix(seq(2), ncol=2))
+    layout(matrix(seq(2), ncol=2))
+  }
   make_coverage_plot(phylo_coverage, file_prefix = file_prefix, n=n, title = title[1])
   make_coverage_plot(cnn_coverage, file_prefix = file_prefix, n=n, title = title[2] )
-  dev.off()
+  if(mkfig) dev.off()
 }
 
 make_runtime_scatter_plots <- function(phylo_runtime_numtips_treesize,  
@@ -403,7 +435,7 @@ make_qqplots <- function(cnn_pred, phylo_pred, file_prefix = NULL){
 }
 
 make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
-                               n = 100,pcolor = c("blue", "orange", "red"), title = "",
+                               n = 100,pcolor = c("purple", "orange", "darkgreen"), title = "",
                                plegend = c(expression("R"[0]), expression(delta), "m"), file_prefix = NULL){
   
 
@@ -418,93 +450,10 @@ make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9
   lines(seq(length(hpd)+1)-0.5, c(hpd, rev(hpd)[1]), type = "s")
   sapply(seq(ncol(coverage)), function(x) points(seq(hpd) + runif(hpd, -0.02,0.02), lwd = 1.75,
                                     cex = 1.25, coverage[,x], col = pcolor[x]))
-  legend(0.4, 1, legend = plegend, fill = c(pcolor, "red"), cex = 0.75, bty = "n", border = "white")
+  legend(0.4, 1, legend = plegend, fill = c(pcolor, "red"), cex = 1.1, bty = "n", border = "white")
 
 }
 
-
-make_change_in_error_boxplots <- function(true_cnn_pred, true_phylo_pred,
-                                          mispec_cnn_pred, mispec_phylo_pred,   
-                                          true_labels, mispec_labels, baseline, 
-                                          ceiling = 200, whisker = 1.5,
-                                          legend = c("CNN, true model", "CNN, misspecified model", 
-                                                     "Post. mean, true model", 
-                                                     "Post. mean, misspecified model", 
-                                                     "Baseline"),
-                                          box_at = c(1,2,3,4,5,
-                                                     7,8,9,10,11,
-                                                     13,14,15,16,17),
-                                          file_prefix = NULL){
-  # compute errors
-  # recover()
-  misspec_cnn_error = as.matrix(get_ape(mispec_cnn_pred, mispec_labels))
-  true_cnn_error = as.matrix(get_ape(true_cnn_pred, true_labels))
-  
-  misspec_phylo_error = as.matrix(get_ape(mispec_phylo_pred, mispec_labels))
-  true_phylo_error = as.matrix(get_ape(true_phylo_pred, true_labels))
-  
-  baseline_ape = as.matrix(get_ape(baseline, mispec_labels))
-  
-  # make vector lengths equal baseline is same length as misspec_error
-  maxlength = max(c(length(misspec_cnn_error[,1]), length(true_cnn_error[,1]),
-                    length(misspec_phylo_error[,1]), length(true_phylo_error[,1])))
-  
-  all_data <- c()
-  sapply(seq(ncol(misspec_cnn_error)), function(column){
-    
-    me_cnn <- misspec_cnn_error[,column]
-    te_cnn <- true_cnn_error[,column]
-    me_phylo <- misspec_phylo_error[,column]
-    te_phylo <- true_phylo_error[,column]
-    be <- baseline_ape[,column]
-    
-    length(me_cnn) <- maxlength
-    length(te_cnn) <- maxlength
-    length(me_phylo) <- maxlength
-    length(te_phylo) <- maxlength
-    length(be) <- maxlength
-    
-    all_data <<- cbind(all_data, te_cnn, me_cnn, te_phylo, me_phylo, be)
-  })
-  
-  # xxx
-  nc = ncol(baseline_ape)
-  num_boxes = 5 * ncol(baseline_ape) 
-  
-  point_colors = c(rgb(0,0,1,0.5), rgb(0.5,0.5,1,0.5),
-                   rgb(1,0,0,0.5), rgb(1,0.5,0.5,0.5), 
-                   rgb(0.5,0.5,0.5,0.75) )
-  legend.col = c(rgb(0,0,1,1), rgb(0.5,0.5,1,1), 
-                 rgb(1,0,0,1), rgb(1,0.5,0.5,1), 
-                 rgb(0.5,0.5,0.5,1) )
-  pc = rep(point_colors, ncol(baseline_ape))
-  
-  if(!is.null(file_prefix)) pdf(paste0(file_prefix, ".pdf"), width = fig_scale, height = 0.8 * fig_scale)
-  
-  plot(NULL, ylim = c(0,ceiling), xlim = c(0.5, num_boxes + 0.5 + 2),
-          ylab = "APE", xaxt = 'n', xlab = "Epidemiological rates")
-  
-  polygon(x = c(0.5,6,6,0.5), y= c(-100, -100, 2*ceiling, 2*ceiling), border = NA, col = rgb(0,0,0,0.05))
-  polygon(x = c(12,17.5,17.5,12), y= c(-100, -100, 2*ceiling, 2*ceiling), border = NA, col = rgb(0,0,0,0.05))
-  
-  boxplot(all_data, col = "white", border = "black", range = whisker, 
-          outline = F, at = box_at, add = TRUE, xlab = "", xaxt = 'n')
-  axis(side =1, at = c(3,9,15), labels = c(expression("R"[0]), expression(delta), "m"))
-  
-  legend(0.5, ceiling, legend = legend,
-         fill = legend.col, cex = 0.75, bty = "n", border = "white")
-  
-  # set > ceiling to ceiling and add points to boxplot
-  all_data[which(all_data > ceiling, arr.ind = T)] = ceiling
-  
-  for(x in seq(ncol(all_data))){
-    points(box_at[x] + runif(maxlength, -0.25, 0.25), all_data[,x],
-           col = pc[x], pch = 16, cex = 0.75)
-  }
-  
-  arrows( x0 = c(0, 7, 15), y0 = rep(-10,3), x1 = c(5,13,17), y1 = rep(-10,3), length = 0)
-  if(!is.null(file_prefix)) dev.off()
-}
 
 
 make_error_boxplots <- function(cnn_pred, phylo_pred, baseline, labels,
@@ -902,6 +851,8 @@ make_misspec_BESTplots <- function(cnn_ape, phylo_ape, cnn_ref_ape, phylo_ref_ap
 ########################
 # maybe don't use
 
+
+
 old_make_phylocomp_BESTplots  <- function(cnn_ape, phylo_ape, param_labels = expression("R"[0], delta[""], "m"[""]), 
                                           file_param_names = c("R0", "delta", "m"), file_prefix = NULL){
   
@@ -1099,6 +1050,91 @@ old_make_misspec_BESTplots <- function(cnn_ape, phylo_ape, cnn_ref_ape, phylo_re
               HPI = HPI))
   
 }
+
+
+make_change_in_error_boxplots <- function(true_cnn_pred, true_phylo_pred,
+                                          mispec_cnn_pred, mispec_phylo_pred,   
+                                          true_labels, mispec_labels, baseline, 
+                                          ceiling = 200, whisker = 1.5,
+                                          legend = c("CNN, true model", "CNN, misspecified model", 
+                                                     "Post. mean, true model", 
+                                                     "Post. mean, misspecified model", 
+                                                     "Baseline"),
+                                          box_at = c(1,2,3,4,5,
+                                                     7,8,9,10,11,
+                                                     13,14,15,16,17),
+                                          file_prefix = NULL){
+  # compute errors
+  # recover()
+  misspec_cnn_error = as.matrix(get_ape(mispec_cnn_pred, mispec_labels))
+  true_cnn_error = as.matrix(get_ape(true_cnn_pred, true_labels))
+  
+  misspec_phylo_error = as.matrix(get_ape(mispec_phylo_pred, mispec_labels))
+  true_phylo_error = as.matrix(get_ape(true_phylo_pred, true_labels))
+  
+  baseline_ape = as.matrix(get_ape(baseline, mispec_labels))
+  
+  # make vector lengths equal baseline is same length as misspec_error
+  maxlength = max(c(length(misspec_cnn_error[,1]), length(true_cnn_error[,1]),
+                    length(misspec_phylo_error[,1]), length(true_phylo_error[,1])))
+  
+  all_data <- c()
+  sapply(seq(ncol(misspec_cnn_error)), function(column){
+    
+    me_cnn <- misspec_cnn_error[,column]
+    te_cnn <- true_cnn_error[,column]
+    me_phylo <- misspec_phylo_error[,column]
+    te_phylo <- true_phylo_error[,column]
+    be <- baseline_ape[,column]
+    
+    length(me_cnn) <- maxlength
+    length(te_cnn) <- maxlength
+    length(me_phylo) <- maxlength
+    length(te_phylo) <- maxlength
+    length(be) <- maxlength
+    
+    all_data <<- cbind(all_data, te_cnn, me_cnn, te_phylo, me_phylo, be)
+  })
+  
+  # xxx
+  nc = ncol(baseline_ape)
+  num_boxes = 5 * ncol(baseline_ape) 
+  
+  point_colors = c(rgb(0,0,1,0.5), rgb(0.5,0.5,1,0.5),
+                   rgb(1,0,0,0.5), rgb(1,0.5,0.5,0.5), 
+                   rgb(0.5,0.5,0.5,0.75) )
+  legend.col = c(rgb(0,0,1,1), rgb(0.5,0.5,1,1), 
+                 rgb(1,0,0,1), rgb(1,0.5,0.5,1), 
+                 rgb(0.5,0.5,0.5,1) )
+  pc = rep(point_colors, ncol(baseline_ape))
+  
+  if(!is.null(file_prefix)) pdf(paste0(file_prefix, ".pdf"), width = fig_scale, height = 0.8 * fig_scale)
+  
+  plot(NULL, ylim = c(0,ceiling), xlim = c(0.5, num_boxes + 0.5 + 2),
+       ylab = "APE", xaxt = 'n', xlab = "Epidemiological rates")
+  
+  polygon(x = c(0.5,6,6,0.5), y= c(-100, -100, 2*ceiling, 2*ceiling), border = NA, col = rgb(0,0,0,0.05))
+  polygon(x = c(12,17.5,17.5,12), y= c(-100, -100, 2*ceiling, 2*ceiling), border = NA, col = rgb(0,0,0,0.05))
+  
+  boxplot(all_data, col = "white", border = "black", range = whisker, 
+          outline = F, at = box_at, add = TRUE, xlab = "", xaxt = 'n')
+  axis(side =1, at = c(3,9,15), labels = c(expression("R"[0]), expression(delta), "m"))
+  
+  legend(0.5, ceiling, legend = legend,
+         fill = legend.col, cex = 0.75, bty = "n", border = "white")
+  
+  # set > ceiling to ceiling and add points to boxplot
+  all_data[which(all_data > ceiling, arr.ind = T)] = ceiling
+  
+  for(x in seq(ncol(all_data))){
+    points(box_at[x] + runif(maxlength, -0.25, 0.25), all_data[,x],
+           col = pc[x], pch = 16, cex = 0.75)
+  }
+  
+  arrows( x0 = c(0, 7, 15), y0 = rep(-10,3), x1 = c(5,13,17), y1 = rep(-10,3), length = 0)
+  if(!is.null(file_prefix)) dev.off()
+}
+
 
 
 make_change_in_accuracy_root_location_plots <- function(misspec_pred,
