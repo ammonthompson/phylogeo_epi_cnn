@@ -90,7 +90,12 @@ plot_error_as_function_numtips <- function(cnn_ape, phylo_ape, ref_ape, cnnphylo
   layout(1)
 }
 
-
+make_panel_label = function(label = ""){
+  pplt <- par("plt")
+  adjx <- (0 - pplt[1]) / (pplt[2] - pplt[1])
+  liney = par("mar")[3] - 1.75
+  mtext(label, side = 3, cex = 1.5, adj = adjx, line = liney)
+}
 
 # figure making
 make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix = NULL, 
@@ -129,18 +134,18 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   
   
   
-  make_scatter_plot(cnn_rates, phylo_rates, rates_labels, set_layout = FALSE, panel_label = TRUE, 
+  make_scatter_plot(cnn_rates, phylo_rates, rates_labels, set_layout = FALSE, panel_label = "A", 
                     phylo_coverage = phy_coverage, cnn_coverage = cnn_coverage)
   
-  make_error_difference_boxplot(cnn_rates, phylo_rates, rates_labels, panel_label = TRUE)
+  make_error_difference_boxplot(cnn_rates, phylo_rates, rates_labels, panel_label = "C")
   
-  make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = TRUE)
+  make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = "D")
   
   ### experiment ###
   make_coverage_figure(phy_coverage, cnn_coverage, 
                        file_prefix = NULL,
                        n = nrow(cnn_preds), title = c("Bayesian coverage", "CNN coverage"),
-                       mkfig = F)
+                       mkfig = F, panel_label = "B")
   ##################
   
   if(! is.null(file_prefix)) dev.off()
@@ -151,7 +156,7 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
 }
 
 make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = NULL, file_type = "pdf",
-                              panel_label = FALSE, set_layout = TRUE, phylo_row_main_names = NULL, 
+                              panel_label = NULL, set_layout = TRUE, phylo_row_main_names = NULL, 
                               phylo_coverage=rep("",3), cnn_coverage=rep("",3)){
   
   if(is.null(phylo_row_main_names)) phylo_row_main_names = c(expression("R"["0"]),  expression(delta[""]), expression("m"[""]))
@@ -192,12 +197,15 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
       # text(xlim[1], 0.98*ylim[2], labels = round(cnn_coverage[i], digits = 2), pos = 4, cex = 1.25) # experimental
       
       # panel label
-      if(i == 1 & panel_label == TRUE){
-        pplt <- par("plt")
-        adjx <- (0 - pplt[1]) / (pplt[2] - pplt[1])
-        liney = par("mar")[3] - 1.75
-        mtext("A", side = 3, cex = 1.5, adj = adjx, line = liney)
-      }
+      # if(i == 1 & panel_label == TRUE){
+      #   pplt <- par("plt")
+      #   adjx <- (0 - pplt[1]) / (pplt[2] - pplt[1])
+      #   liney = par("mar")[3] - 1.75
+      #   mtext("A", side = 3, cex = 1.5, adj = adjx, line = liney)
+      # }
+      
+      if(i == 1 & (! is.null(panel_label))) make_panel_label(panel_label)
+      
       
       #Phylo scatterplots
       xlim = c(min(phylo_pred[,i]), max(phylo_pred[,i]))
@@ -232,7 +240,7 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
 make_error_difference_boxplot <- function(cnn_pred, phylo_pred, labels, 
                                           whisker = 1,
                                           boxnames = NULL, 
-                                          panel_label = FALSE, 
+                                          panel_label = NULL, 
                                           file_prefix = NULL, file_type = "pdf"){
   cnn_pred_error = get_ape(cnn_pred, labels)
   phylo_pred_error = get_ape(phylo_pred, labels)
@@ -275,12 +283,7 @@ make_error_difference_boxplot <- function(cnn_pred, phylo_pred, labels,
   
   abline(h=0,col = "red")
   
-  if(panel_label == TRUE){
-    pplt <- par("plt")
-    adjx <- (0 - pplt[1]) / (pplt[2] - pplt[1])
-    liney = par("mar")[3] - 1.75
-    mtext("B", side = 3, cex = 1.5, adj = adjx, line = liney)
-  }
+  if(! is.null(panel_label)) make_panel_label(panel_label)
   
   
   # plot data points
@@ -301,7 +304,7 @@ make_error_difference_boxplot <- function(cnn_pred, phylo_pred, labels,
 }
 
 make_root_location_plots <- function(cnn_pred, phylo_pred, labels, 
-                                     panel_label = FALSE, file_prefix = NULL,
+                                     panel_label = NULL, file_prefix = NULL,
                                      file_type = "pdf"){
   
   cnn_acc = get_rootloc_accuracy(cnn_pred, labels)
@@ -340,12 +343,8 @@ make_root_location_plots <- function(cnn_pred, phylo_pred, labels,
   axis(1)
   box()
   
-  if(panel_label == TRUE){
-    pplt <- par("plt")
-    adjx <- (0 - pplt[1]) / (pplt[2] - pplt[1])
-    liney = par("mar")[3] - 1.5
-    mtext("C", side = 3, cex = 1.5, adj = adjx, line = liney)
-  }
+  # panel label
+  if(! is.null(panel_label)) make_panel_label(panel_label)
   
   tbw = 25
   yaxis_tick_locs = seq(-(tbw + bothmax - bothmax %% tbw), tbw + bothmax - bothmax %% tbw, by = tbw)
@@ -360,17 +359,6 @@ make_root_location_plots <- function(cnn_pred, phylo_pred, labels,
   
   if(!is.null(file_prefix)) dev.off()
   
-}
-
-make_coverage_figure <- function(phylo_coverage, cnn_coverage, file_prefix, n, title = c("",""), mkfig=T){
-  if(mkfig){ 
-    jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
-       res = 400, width = 0.95*fig_scale, height = 0.5*fig_scale)
-    layout(matrix(seq(2), ncol=2))
-  }
-  make_coverage_plot(phylo_coverage, file_prefix = file_prefix, n=n, title = title[1])
-  make_coverage_plot(cnn_coverage, file_prefix = file_prefix, n=n, title = title[2] )
-  if(mkfig) dev.off()
 }
 
 make_runtime_scatter_plots <- function(phylo_runtime_numtips_treesize,  
@@ -413,6 +401,42 @@ make_runtime_scatter_plots <- function(phylo_runtime_numtips_treesize,
 }
 
 
+make_coverage_figure <- function(phylo_coverage, cnn_coverage, file_prefix, n, title = c("",""), mkfig=T, panel_label=NULL){
+  if(mkfig){ 
+    jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
+       res = 400, width = 0.95*fig_scale, height = 0.5*fig_scale)
+    layout(matrix(seq(2), ncol=2))
+  }
+  make_coverage_plot(cnn_coverage, file_prefix = file_prefix, n=n, title = title[2], panel_label = panel_label )
+  make_coverage_plot(phylo_coverage, file_prefix = file_prefix, n=n, title = title[1])
+  if(mkfig) dev.off()
+}
+
+
+make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
+                               n = 100,pcolor = c("purple", "orange", "darkgreen"), title = "", panel_label=NULL,
+                               plegend = c(expression("R"[0]), expression(delta), "m"), file_prefix = NULL){
+  
+
+  boxplot(t(coverage), border ="white", col = "white", xlim = c(0.5, length(hpd) + 0.5), ylim = c(0,1),
+          ylab = "observed", xlab= "expected", names = hpd, main = title, cex.lab = 1.3)
+
+  # coverage ~ beta((n+1)q, n-(n+1)q+1)
+  sapply(seq(hpd), function(x){
+    ci = qbeta(c(0.025,0.975), (n-1)*hpd[x], n - (n+1)*hpd[x] + 1)
+    polygon(c(x-0.5, x+0.5, x+0.5, x-0.5), c(ci[1], ci[1], ci[2], ci[2]), col = rgb(0,0,0,0.1), border = NA)
+  })
+  lines(seq(length(hpd)+1)-0.5, c(hpd, rev(hpd)[1]), type = "s")
+  sapply(seq(ncol(coverage)), function(x) points(seq(hpd) + runif(hpd, -0.02,0.02), lwd = 1.75,
+                                    cex = 1.25, coverage[,x], col = pcolor[x]))
+  legend(0.4, 1, legend = plegend, fill = c(pcolor, "red"), cex = 1.1, bty = "n", border = "white")
+  
+  if(! is.null(panel_label)) make_panel_label(panel_label)
+  
+}
+
+
+
 # supplemnetal figure making
 make_qqplots <- function(cnn_pred, phylo_pred, file_prefix = NULL){
   if(!is.null(file_prefix)) pdf(paste0(file_prefix, ".pdf"), width = fig_scale, height = 0.5*fig_scale)
@@ -432,26 +456,6 @@ make_qqplots <- function(cnn_pred, phylo_pred, file_prefix = NULL){
   par("mar" = old_par)
   layout(1)
   if(!is.null(file_prefix)) dev.off()
-}
-
-make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
-                               n = 100,pcolor = c("purple", "orange", "darkgreen"), title = "",
-                               plegend = c(expression("R"[0]), expression(delta), "m"), file_prefix = NULL){
-  
-
-  boxplot(t(coverage), border ="white", col = "white", xlim = c(0.5, length(hpd) + 0.5), ylim = c(0,1),
-          ylab = "observed", xlab= "expected", names = hpd, main = title)
-
-  # coverage ~ beta((n+1)q, n-(n+1)q+1)
-  sapply(seq(hpd), function(x){
-    ci = qbeta(c(0.025,0.975), (n-1)*hpd[x], n - (n+1)*hpd[x] + 1)
-    polygon(c(x-0.5, x+0.5, x+0.5, x-0.5), c(ci[1], ci[1], ci[2], ci[2]), col = rgb(0,0,0,0.1), border = NA)
-  })
-  lines(seq(length(hpd)+1)-0.5, c(hpd, rev(hpd)[1]), type = "s")
-  sapply(seq(ncol(coverage)), function(x) points(seq(hpd) + runif(hpd, -0.02,0.02), lwd = 1.75,
-                                    cex = 1.25, coverage[,x], col = pcolor[x]))
-  legend(0.4, 1, legend = plegend, fill = c(pcolor, "red"), cex = 1.1, bty = "n", border = "white")
-
 }
 
 
