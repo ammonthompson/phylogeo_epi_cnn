@@ -56,7 +56,7 @@ def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 
     return cov_q
 
 def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
-    # Fit using residuals around CNN predictions rather than LOWESS
+    # Fit using residuals around CNN predictions
     
     # scale and shift columns 1 and 2 to have same spread as column 0
     min_x0 = np.min(x[:,0])
@@ -76,7 +76,7 @@ def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
     upper_q = 1 - lower_q
     tree = KDTree(xx)
 
-    grid_points = 50  # Adjust this number based on your needs
+    grid_points = 40 
     xvals = [np.linspace(np.min(xx[:, i]), np.max(xx[:, i]), grid_points) for i in range(3)]
     local_lower_q = np.empty((grid_points, grid_points, grid_points))  
     local_upper_q = np.empty((grid_points, grid_points, grid_points))
@@ -100,7 +100,8 @@ def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
                                                      local_lower_q, method='linear', bounds_error=False, fill_value=None)
     smoothed_upper_local_q = RegularGridInterpolator((xvals[0], xvals[1], xvals[2]), 
                                                      local_upper_q, method='linear', bounds_error=False, fill_value=None)
-
+        
+    # output functions for exponentiating, rescaling and interpolation
     def scaled_lq(a):
         a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0)
         a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0)
@@ -112,27 +113,6 @@ def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
     
     return None, scaled_lq, scaled_uq
 
-
-def plot_lowess_fit_quantile(x, y, mean_smooth_f, lower_q_smooth_f, upper_q_smooth_f):
-    lspace = np.linspace(np.min(x), np.max(x), 100)
-    mean = mean_smooth_f((lspace))
-    lower_q = lower_q_smooth_f(lspace)
-    upper_q = upper_q_smooth_f(lspace)
-    plt.scatter(x, y, label="Data points", alpha=0.5, s=10)
-    plt.plot(lspace, lspace, color = "yellow", label = "y = x")
-    plt.plot(lspace, (mean), color="red", label="Local linear regression")
-    plt.fill_between(
-        lspace,
-        lower_q,
-        upper_q,
-        color="red",
-        alpha=0.25,
-        label="inner q",
-    )
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.legend()
-    plt.show()
 
     
  

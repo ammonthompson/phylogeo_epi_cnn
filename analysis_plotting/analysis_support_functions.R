@@ -97,6 +97,45 @@ make_panel_label = function(label = ""){
   mtext(label, side = 3, cex = 1.5, adj = adjx, line = liney)
 }
 
+my_intersect = function(interval1, interval2){
+  return((interval1[,2] - interval1[,1]) - abs(interval1[,2] - interval2[,2]) - abs(interval1[,1] - interval2[,1]) )
+}
+
+my_union = function(interval1, interval2){
+  return((interval1[,2] - interval2[,1]) + (interval2[,2] - interval2[,1]) - my_intersect(interval1, interval2))
+}
+
+plot_ci_widths = function(cnn_ci, phylo_ci, labels){
+  cnn_R0 = cnn_ci[,2] - cnn_ci[,1]
+  cnn_delta = cnn_ci[,4] - cnn_ci[,3]
+  cnn_m = cnn_ci[,6] - cnn_ci[,5]
+  
+  phy_R0 = phylo_ci[,2] - phylo_ci[,1]
+  phy_delta = phylo_ci[,4] - phylo_ci[,3]
+  phy_m = phylo_ci[,6] - phylo_ci[,5]
+  
+  j_r0 = my_intersect(cnn_ci[,1:2], phylo_ci[,1:2]) / my_union(cnn_ci[,1:2], phylo_ci[,1:2])
+  j_delta = my_intersect(cnn_ci[,3:4], phylo_ci[,3:4]) / my_union(cnn_ci[,3:4], phylo_ci[,3:4])
+  j_m = my_intersect(cnn_ci[,5:6], phylo_ci[,5:6]) / my_union(cnn_ci[,5:6], phylo_ci[,5:6])
+
+  idx = seq(50)
+  nn = seq(nrow(labels[idx,]))
+  for(i in seq(3)){
+    ylim = c(min(c(cnn_ci[idx,2*i-1], phylo_ci[idx,2*i-1])), max(c(cnn_ci[idx,2*i], phylo_ci[idx,2*i])))
+    plot(NULL, xlim = c(0,length(idx)),ylim = ylim, pch = 16)
+    arrows(nn-0.2, cnn_ci[idx,2*i], nn-0.2, cnn_ci[idx,2*i-1], col= "blue", angle = 0, lwd = 2)
+    arrows(nn+0.2, phylo_ci[idx,2*i], nn+0.2, phylo_ci[idx,2*i-1], col= "red", angle = 0, lwd = 2)
+    points(labels[idx,i], pch = 16)
+    
+    
+    plot(cnn_ci[,2*i] - cnn_ci[,2*i-1], phylo_ci[,2*i] - phylo_ci[,2*i-1])
+    abline(0,1,col = "red")
+  }
+  cat("R0: ", mean(cnn_R0/phy_R0), " delta: ", mean(cnn_delta/phy_delta), " m: ", mean(cnn_m / phy_m), "\n")
+  cat("jaccard:  ", "R0 = ", mean(j_r0), " delta = ", mean(j_delta), " m = ", mean(j_m), "\n" )
+  
+}
+
 # figure making
 make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix = NULL, 
                                    phy_coverage = rep(0.95,3), cnn_coverage = rep(0.95,3)){
@@ -121,33 +160,41 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   
   # grid = matrix(c(1,2,3,10,4,5,6,10,7,8,9,11,12,12,13,13), ncol = 4, nrow = 4, byrow=F)
   
+  # grid = matrix(c(1,1,2,2,3,3,10,10,
+  #                 1,1,2,2,3,3,10,10,
+  #                 4,4,5,5,6,6,10,10,
+  #                 4,4,5,5,6,6,10,10,
+  #                 7,7,8,8,9,9,10,10,
+  #                 7,7,8,8,9,9,10,10,
+  #                 11,11,11,12,12,12,13,13,
+  #                 11,11,11,12,12,12,13,13), ncol = 8, nrow = 8, byrow=F)
+  
   grid = matrix(c(1,1,2,2,3,3,10,10,
                   1,1,2,2,3,3,10,10,
-                  4,4,5,5,6,6,10,10,
-                  4,4,5,5,6,6,10,10,
-                  7,7,8,8,9,9,10,10,
-                  7,7,8,8,9,9,10,10,
-                  12,12,12,13,13,13,11,11,
-                  12,12,12,13,13,13,11,11), ncol = 8, nrow = 8, byrow=F)
+                  4,4,5,5,6,6,11,11,
+                  4,4,5,5,6,6,11,11,
+                  7,7,8,8,9,9,12,12,
+                  7,7,8,8,9,9,12,12,
+                  13,13,13,14,14,14,15,15,
+                  13,13,13,14,14,14,15,15), ncol = 8, nrow = 8, byrow=F)
   
-  layout(grid, widths = c(rep(1,7), 1.5), heights = c(rep(1,7), 1.5))
+  layout(grid, widths = c(rep(1,7), 1.25), heights = c(rep(1,7), 1.25))
   
   
   
   make_scatter_plot(cnn_rates, phylo_rates, rates_labels, set_layout = FALSE, panel_label = "A", 
                     phylo_coverage = phy_coverage, cnn_coverage = cnn_coverage)
   
-  make_error_difference_boxplot(cnn_rates, phylo_rates, rates_labels, panel_label = "C")
+  make_error_difference_boxplot(cnn_rates, phylo_rates, rates_labels, panel_label = "B")
   
-  make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = "D")
   
-  ### experiment ###
   make_coverage_figure(phy_coverage, cnn_coverage, 
                        file_prefix = NULL,
                        n = nrow(cnn_preds), title = c("Bayesian coverage", "CNN coverage"),
-                       mkfig = F, panel_label = "B")
-  ##################
-  
+                       mkfig = F, panel_label = "C")
+ 
+   make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = "D")
+
   if(! is.null(file_prefix)) dev.off()
   
   layout(1)
@@ -238,18 +285,18 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
 
 
 make_error_difference_boxplot <- function(cnn_pred, phylo_pred, labels, 
-                                          whisker = 1,
+                                          whisker = 1.5,
                                           boxnames = NULL, 
                                           panel_label = NULL, 
                                           file_prefix = NULL, file_type = "pdf"){
+  
   cnn_pred_error = get_ape(cnn_pred, labels)
   phylo_pred_error = get_ape(phylo_pred, labels)
   difference = cnn_pred_error - phylo_pred_error
-  # difference = 100 * (as.matrix(cnn_pred) - as.matrix(phylo_pred))/as.matrix(labels)
-  
+
   if(is.null(boxnames)) boxnames = c(expression("R"[0]), expression(delta[]), expression("m"[]))
   
-  # make boxplot
+  # make boxplots
   if(!is.null(file_prefix)){
     if(file_type == "pdf"){
       pdf(paste0(file_prefix, ".pdf"), width = 0.5*fig_scale, height = 0.7*fig_scale)
@@ -261,43 +308,38 @@ make_error_difference_boxplot <- function(cnn_pred, phylo_pred, labels,
   
   old_mar = par("mar")
   new_mar = old_mar
-  new_mar[c(1,3,4)] = old_mar[c(1,3,4)] * c(0.8, 0.25, 0.5)
+  new_mar[c(1,3,4)] = old_mar[c(1,3,4)] * c(0.5, 0.25, 0.5)
   par("mar" = new_mar)
-  
-  dbx = boxplot(difference, range = whisker, plot = FALSE)
-  upper_cutoff = 1.1 * max(abs(dbx$stats))
-  lower_cutoff = -upper_cutoff 
-  
-  # box_x_locations = seq(length(boxnames))
-  box_x_locations = c(0.5,2,3.5)
-  
-  boxplot(difference, col = "white", border = "black", main = "", boxwex = 0.75, at = box_x_locations,
-          ylab = expression("CNN APE  " - " Post. mean APE"), outline = F, xaxt = 'n', cex.lab = 1.1,
-          range = whisker, ylim = c(lower_cutoff, upper_cutoff))
-  
-  omg = par("mgp")
-  par(mgp = c(3,2,0))
-  axis(side =1, at = box_x_locations, labels = boxnames, 
-       tick = F, cex.axis = 1.75, cex = 1.5)
-  par(mgp = omg)
-  
-  abline(h=0,col = "red")
-  
-  if(! is.null(panel_label)) make_panel_label(panel_label)
-  
-  
-  # plot data points
-  difference[which(difference < lower_cutoff, arr.ind = T)] = lower_cutoff
-  difference[which(difference > upper_cutoff, arr.ind = T)] = upper_cutoff
-  
-  for(x in seq(ncol(difference))){
-    outlier_idx = which(difference[,x] %in% c(lower_cutoff, upper_cutoff))
-    x_jitter = box_x_locations[x] + runif(nrow(difference), -0.25, 0.25)
-    points(x_jitter, difference[,x], 
-           col = rgb(1, 0.65, 0, 0.75), pch = 16, cex = 0.75)
-    points(x_jitter[outlier_idx], difference[outlier_idx,x],
-           cex = 0.75, lwd = 0.75)
+
+  for(bb in seq(ncol(cnn_pred))){
+      
+      dbx = boxplot(difference[,bb], range = whisker, plot = FALSE)
+      upper_cutoff = 2 * max(abs(dbx$stats))
+      lower_cutoff = -upper_cutoff
+      
+      ylab = ifelse(bb == 1, expression("CNN APE  " - " Post. mean APE"), "")
+      
+      boxplot(difference[,bb], col = "white", border = "black", main = "", boxwex = 0.75,
+              ylab = ylab, outline = F, xaxt = 'n', cex.lab = 1.2,
+              range = whisker, ylim = c(lower_cutoff, upper_cutoff))
+      abline(h=0,col = "red")
+      
+      
+      axis(side =1, at = 1, labels = boxnames[bb], tick = F, cex = 1.5, cex.axis = 1.75 )
+      
+      difference[which(difference[,bb] < lower_cutoff),bb] = lower_cutoff
+      difference[which(difference[,bb] > upper_cutoff),bb] = upper_cutoff
+    
+      outlier_idx = which(difference[,bb] %in% c(lower_cutoff, upper_cutoff))
+      x_jitter = 1 + runif(nrow(difference), -0.25, 0.25)
+      points(x_jitter, difference[,bb], 
+             col = rgb(1, 0.65, 0, 0.75), pch = 16, cex = 0.75)
+      points(x_jitter[outlier_idx], difference[outlier_idx,bb],
+             cex = 0.75, lwd = 0.75)
+      if(! is.null(panel_label) & bb == 1) make_panel_label(panel_label)
+    
   }
+  
   par("mar" = old_mar)
   
   if(!is.null(file_prefix)) dev.off()
@@ -333,7 +375,7 @@ make_root_location_plots <- function(cnn_pred, phylo_pred, labels,
   
   old_mar = par("mar")
   new_mar = old_mar
-  new_mar[3] = old_mar[3] * 0.25
+  new_mar[c(3,4)] = old_mar[c(3,4)] * c(0.25, 0.5)
   par("mar" = new_mar)
   
   plot(cnnhist, col = rgb(0,0,1,1), ylim = c(-bothmax, bothmax), main = "", border = "white", axes = F, 
@@ -417,7 +459,11 @@ make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9
                                n = 100,pcolor = c("purple", "orange", "darkgreen"), title = "", panel_label=NULL,
                                plegend = c(expression("R"[0]), expression(delta), "m"), file_prefix = NULL){
   
-
+  
+  top_right_mar = par("mar")[c(3,4)] * 0.5
+  old_par = par("mar")
+  par("mar" = c(par("mar")[1:2], top_right_mar))
+  
   boxplot(t(coverage), border ="white", col = "white", xlim = c(0.5, length(hpd) + 0.5), ylim = c(0,1),
           ylab = "observed", xlab= "expected", names = hpd, main = title, cex.lab = 1.3)
 
@@ -429,9 +475,11 @@ make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9
   lines(seq(length(hpd)+1)-0.5, c(hpd, rev(hpd)[1]), type = "s")
   sapply(seq(ncol(coverage)), function(x) points(seq(hpd) + runif(hpd, -0.02,0.02), lwd = 1.75,
                                     cex = 1.25, coverage[,x], col = pcolor[x]))
-  legend(0.4, 1, legend = plegend, fill = c(pcolor, "red"), cex = 1.1, bty = "n", border = "white")
+  legend(0.4, 1, legend = plegend, fill = c(pcolor, "red"), cex = 1.25, bty = "n", border = "white")
   
   if(! is.null(panel_label)) make_panel_label(panel_label)
+  
+  par("mar" = old_par)
   
 }
 
@@ -1222,6 +1270,76 @@ make_error_difference_hist <- function(cnn_pred, phylo_pred, labels){
   layout(1)
 
 }
+
+
+
+old_make_error_difference_boxplot <- function(cnn_pred, phylo_pred, labels, 
+                                              whisker = 1,
+                                              boxnames = NULL, 
+                                              panel_label = NULL, 
+                                              file_prefix = NULL, file_type = "pdf"){
+  cnn_pred_error = get_ape(cnn_pred, labels)
+  phylo_pred_error = get_ape(phylo_pred, labels)
+  difference = cnn_pred_error - phylo_pred_error
+  # difference = 100 * (as.matrix(cnn_pred) - as.matrix(phylo_pred))/as.matrix(labels)
+  
+  if(is.null(boxnames)) boxnames = c(expression("R"[0]), expression(delta[]), expression("m"[]))
+  
+  # make boxplot
+  if(!is.null(file_prefix)){
+    if(file_type == "pdf"){
+      pdf(paste0(file_prefix, ".pdf"), width = 0.5*fig_scale, height = 0.7*fig_scale)
+    }else if(file_type == "jpeg"){
+      jpeg(paste0(file_prefix, ".jpg"), width = 0.5*fig_scale, height = 0.7*fig_scale, 
+           res = 400, quality = 100, units = "in")
+    }
+  }
+  
+  old_mar = par("mar")
+  new_mar = old_mar
+  new_mar[c(1,3,4)] = old_mar[c(1,3,4)] * c(0.8, 0.25, 0.5)
+  par("mar" = new_mar)
+  
+  dbx = boxplot(difference, range = whisker, plot = FALSE)
+  upper_cutoff = 1.1 * max(abs(dbx$stats))
+  lower_cutoff = -upper_cutoff 
+  
+  # box_x_locations = seq(length(boxnames))
+  box_x_locations = c(0.5,2,3.5)
+  
+  boxplot(difference, col = "white", border = "black", main = "", boxwex = 0.75, at = box_x_locations,
+          ylab = expression("CNN APE  " - " Post. mean APE"), outline = F, xaxt = 'n', cex.lab = 1.1,
+          range = whisker, ylim = c(lower_cutoff, upper_cutoff))
+  
+  omg = par("mgp")
+  par(mgp = c(3,2,0))
+  axis(side =1, at = box_x_locations, labels = boxnames, 
+       tick = F, cex.axis = 1.75, cex = 1.5)
+  par(mgp = omg)
+  
+  abline(h=0,col = "red")
+  
+  if(! is.null(panel_label)) make_panel_label(panel_label)
+  
+  
+  # plot data points
+  difference[which(difference < lower_cutoff, arr.ind = T)] = lower_cutoff
+  difference[which(difference > upper_cutoff, arr.ind = T)] = upper_cutoff
+  
+  for(x in seq(ncol(difference))){
+    outlier_idx = which(difference[,x] %in% c(lower_cutoff, upper_cutoff))
+    x_jitter = box_x_locations[x] + runif(nrow(difference), -0.25, 0.25)
+    points(x_jitter, difference[,x], 
+           col = rgb(1, 0.65, 0, 0.75), pch = 16, cex = 0.75)
+    points(x_jitter[outlier_idx], difference[outlier_idx,x],
+           cex = 0.75, lwd = 0.75)
+  }
+  par("mar" = old_mar)
+  
+  if(!is.null(file_prefix)) dev.off()
+}
+
+
 
 get_categorical_crossentropy <- function(y_pred, y_true, inf_tol = 10^-10){
 
