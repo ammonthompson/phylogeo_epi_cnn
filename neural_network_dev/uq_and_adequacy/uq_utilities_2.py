@@ -7,7 +7,7 @@
 from statsmodels.nonparametric.smoothers_lowess import lowess
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.spatial import KDTree
+from scipy.spatial import cKDTree
 from scipy.interpolate import RegularGridInterpolator
 from scipy.interpolate import interp1d
 import copy
@@ -55,8 +55,10 @@ def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 
         print(str(quantiles[q]) + " finished: " + str(cov_q[-1]))
     return cov_q
 
-def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
+def get_CPI(x, y, frac=0.1, inner_quantile=0.95, grid_points = 20):
     # Fit using residuals around CNN predictions
+    
+    data_stats_rel_weights = [1., 1.]
     
     # scale and shift columns 1 and 2 to have same spread as column 0
     min_x0 = np.min(x[:,0])
@@ -65,8 +67,8 @@ def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
     max_x1 = np.max(x[:,1])
     min_x2 = np.min(x[:,2])
     max_x2 = np.max(x[:,2])
-    x[:,1] = min_x0 + (x[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0)
-    x[:,2] = min_x0 + (x[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0)
+    x[:,1] = min_x0 + (x[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
+    x[:,2] = min_x0 + (x[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
     
     sorted_idx = np.lexsort((x[:,2], x[:,1], x[:,0]))  # Sort by multiple columns
     xx = x[sorted_idx,:]
@@ -74,13 +76,12 @@ def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
     
     lower_q = (1-inner_quantile)/2
     upper_q = 1 - lower_q
-    tree = KDTree(xx)
+    tree = cKDTree(xx, balanced_tree = False)
 
-    grid_points = 40 
     xvals = [np.linspace(np.min(xx[:, i]), np.max(xx[:, i]), grid_points) for i in range(3)]
     local_lower_q = np.empty((grid_points, grid_points, grid_points))  
     local_upper_q = np.empty((grid_points, grid_points, grid_points))
-
+    
     num_frac = int(round(frac * xx.shape[0]))
     
     for i in range(grid_points):
@@ -89,11 +90,23 @@ def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
                 point = [xvals[0][i], xvals[1][j], xvals[2][k]]
                 
                 dist, indices = tree.query(point, num_frac)
+         
                 window_x = xx[indices, :]
                 window_y = yy[indices]
                 residuals = window_y - window_x[:, 0]  # Assuming y is 1-D
-                local_lower_q[i, j, k] = point[0] + np.quantile(residuals, lower_q)
-                local_upper_q[i, j, k] = point[0] + np.quantile(residuals, upper_q)
+                # keep only close to prediction point[0]
+#                 mean_d = np.mean(point[0] - window_x[:,0])
+#                 std_d = np.std(point[0] - window_x[:,0])
+#                 residuals = residuals[np.where(abs(point[0] - window_x[:,0] - mean_d) < (5 * std_d))]
+                residuals = residuals[np.where(np.abs(residuals) < 3 * np.std(residuals))]
+                nr = len(residuals)
+#                 print(nr)
+                rlq = lower_q * (1+nr)/nr if (lower_q * (1+nr)/nr) < 1. else 1.
+                ruq = upper_q * (1+nr)/nr if (upper_q * (1+nr)/nr) < 1. else 1.
+                local_lower_q[i, j, k] = point[0] + np.quantile(residuals, rlq)
+                local_upper_q[i, j, k] = point[0] + np.quantile(residuals, ruq)
+                
+#                 print(np.exp([point[0], local_lower_q[i, j, k], local_upper_q[i, j, k]]))
                 
     # Create functions to interpolate the fits for out-of-sample values
     smoothed_lower_local_q = RegularGridInterpolator((xvals[0], xvals[1], xvals[2]), 
@@ -103,16 +116,13 @@ def get_CPI(x, y, frac=0.1, inner_quantile=0.95):
         
     # output functions for exponentiating, rescaling and interpolation
     def scaled_lq(a):
-        a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0)
-        a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0)
+        a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
+        a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
         return np.exp(smoothed_lower_local_q(a))
     def scaled_uq(a):
-        a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0)
-        a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0)
+        a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
+        a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
         return np.exp(smoothed_upper_local_q(a))
     
     return None, scaled_lq, scaled_uq
 
-
-    
- 

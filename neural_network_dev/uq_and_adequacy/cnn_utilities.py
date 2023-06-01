@@ -248,6 +248,15 @@ def plot_preds_labels(preds, labels, param_names = ["R0", "sample rate", "migrat
         plt.axline((np.min(labels[:,i]),np.min(labels[:,i])), slope = 1, color = 'red', alpha=0.75)
         plt.show()
         
+def plot_QI(preds_low, preds_up, labels, param_names = ["R0", "sample rate", "migration rate"], axis_labels = ["prediction", "truth"]):
+    for j in range(0, len(param_names)):
+        plt.plot(labels[:,j], np.repeat(0, len(labels[:,j])), 'ro', label="True Values", markersize=1)
+        plt.ylabel(param_names[j])
+        for i in range(len(preds_low[:,j])):
+            plt.vlines(labels[i,j], preds_low[i,j] - labels[i,j], preds_up[i,j] - labels[i,j], colors='b', alpha=0.5)
+        plt.legend()
+        plt.show()
+        
 def plot_overlaid_scatter(sample_1, sample_2, reference_sample, 
                           sample_names = ['CNN', 'phylo'],
                           param_names = ["R0", "sample rate", "migration rate"], 
