@@ -11,6 +11,33 @@ from scipy.spatial import cKDTree
 from scipy.interpolate import RegularGridInterpolator
 from scipy.interpolate import interp1d
 import copy
+import cnn_utilities as cn
+import tensorflow as tf
+
+
+def plot_QI(preds_low, preds_up, labels, param_names = ["R0", "sample rate", "migration rate"], axis_labels = ["prediction", "truth"]):
+    # Ensure labels, preds_low, and preds_up are at least two-dimensional
+    labels = np.atleast_2d(labels).T
+    preds_low = np.atleast_2d(preds_low).T
+    preds_up = np.atleast_2d(preds_up).T
+
+    for j in range(0, labels.shape[1]):
+        plt.plot(labels[:,j], np.repeat(0, len(labels[:,j])), 'ro', label="True Values", markersize=1)
+        plt.ylabel(param_names[j])
+        for i in range(len(preds_low[:,j])):
+            plt.vlines(labels[i,j], preds_low[i,j] - labels[i,j], preds_up[i,j] - labels[i,j], colors='b', alpha=0.5)
+        plt.legend()
+        plt.show()
+
+def plot_multi_QI(preds_low, preds_up, labels, param_names = ["R0", "sample rate", "migration rate"], axis_labels = ["prediction", "truth"]):
+    for j in range(0, len(param_names)):
+        plt.plot(labels[:,j], np.repeat(0, len(labels[:,j])), 'ro', label="True Values", markersize=1)
+        plt.ylabel(param_names[j])
+        for i in range(len(preds_low[:,j])):
+            plt.vlines(labels[i,j], preds_low[i,j] - labels[i,j], preds_up[i,j] - labels[i,j], colors='b', alpha=0.5)
+        plt.legend()
+        plt.show()
+        
 
     
     # get coverage statistics
@@ -25,6 +52,27 @@ def percentage_within_intervals(intervals, true_values):
             
     percentage = count / len(intervals) * 100
     return percentage
+
+
+def make_cqr_coverage_set(q_dict, true):
+    ''' 
+        q_dict (dict): A dictionary where keys are quantiles and values are (2, N, 3) numpy arrays representing the lower and upper quantile estimations.
+        true (array-like): The array of true values.
+        Returns: cov_q (dict): A dictionary where keys are quantiles and values are coverage percentages.
+    '''
+    cov_q = {}
+    for quantile, intervals in q_dict.items():
+        # Extract the lower and upper interval predictions
+        i_lower_q, i_upper_q = intervals[0], intervals[1]
+
+        cov_q[quantile] = []
+        for k in range(i_lower_q.shape[1]):
+            i_ci = [(i_lower_q[j, k], i_upper_q[j, k]) for j in range(i_lower_q.shape[0])]
+#             cov_q[quantile][k] = np.round(percentage_within_intervals(i_ci, true[:, k]), decimals = 2)
+            cov_q[quantile] = np.append(cov_q[quantile], np.round(percentage_within_intervals(i_ci, true[:, k]), decimals = 2))
+            print(f"Quantile {quantile}, parameter {k} finished: {cov_q[quantile][k]}")
+
+    return cov_q
 
 
 def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95], q_fun = None):
@@ -54,6 +102,73 @@ def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 
         cov_q.append(percentage_within_intervals(i_ci, y_test))
         print(str(quantiles[q]) + " finished: " + str(cov_q[-1]))
     return cov_q
+
+def make_CQR_coverage_set(ci, true, quantiles = [0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95]):
+    pass
+    
+
+def get_CQR(preds, true, inner_quantile=0.95):
+    #preds axis 0 is the lower and upper quants, axis 1 is the replicates, and axis 2 is the params
+        
+    parms=['R0', 'delta', 'm']    
+ 
+    # compute non-comformity scores
+#     cqr = {}
+    Q = np.array([])
+    for i in range(preds.shape[2]):
+        s = np.amax(np.array((preds[0][:,i] - true[:,i], true[:,i] - preds[1][:,i])), axis=0)
+
+        # get 1 - alpha/2's quintile of non-comformity scores
+        Q = np.append(Q, np.quantile(s, inner_quantile * (1 + 1/preds.shape[1])))
+
+        # adjust quantiles
+#         cqr[parms[i]] = np.array(([preds[0][:,i] - Q, preds[1][:,i] + Q]))
+
+    # return adjusted quantiles
+#     return cqr
+    return Q
+
+
+def get_adaptive_CQR(preds, true, num_grid_points, inner_quantile=0.95):
+    # preds axis 0 is the lower and upper quants, axis 1 is the replicates, and axis 2 is the params
+
+    # initialize dictionaries to hold interpolation functions
+    interp_lower = {}
+    interp_upper = {}
+    
+    for i in range(preds.shape[2]):
+        # create grid for the current parameter
+        grid_points = np.linspace(np.min(preds[:,:,i]), np.max(preds[:,:,i]), num_grid_points)
+
+        # initialize arrays to hold adjusted quantiles
+        adj_lower = np.empty(num_grid_points)
+        adj_upper = np.empty(num_grid_points)
+        
+        for j, grid_point in enumerate(grid_points):
+            # find the indices of the points that fall into the current grid
+            grid_indices = np.logical_and(preds[0, :, i] <= grid_point, preds[1, :, i] >= grid_point)
+            
+            # compute non-conformity scores for points in the grid
+            s = np.amax(np.array((preds[0][grid_indices, i] - true[grid_indices, i], true[grid_indices, i] - preds[1][grid_indices, i])), axis=0)
+            
+            # get 1 - alpha/2's quintile of non-comformity scores
+            finite_n_factor = 1 + 1/sum(grid_indices)
+            q_adj_finite_n = inner_quantile * finite_n_factor if (inner_quantile * finite_n_factor)  <= 1 else 1
+            Q = np.quantile(s, q_adj_finite_n)
+            
+            # adjust quantiles
+            adj_lower[j] = grid_point - Q
+            adj_upper[j] = grid_point + Q
+            
+        # create 1D interpolation functions
+        interp_lower[i] = interp1d(grid_points, adj_lower, bounds_error=False, fill_value='extrapolate')
+        interp_upper[i] = interp1d(grid_points, adj_upper, bounds_error=False, fill_value='extrapolate')
+
+    return interp_lower, interp_upper
+
+
+
+
 
 def get_CPI(x, y, frac=0.1, inner_quantile=0.95, grid_points = 20):
     # Fit using residuals around CNN predictions
