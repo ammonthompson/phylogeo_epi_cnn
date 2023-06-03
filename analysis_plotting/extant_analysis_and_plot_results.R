@@ -10,11 +10,33 @@ source("analysis_support_functions.R")
 figure_relative_dir = "figures/"
 
 #### UQ calibration ############
-caltest_coverage = read.table("../neural_network_dev/data_files/caltest_coverage.tsv", header = T, row.names = 1)/100
-caltest_ci = read.table("../neural_network_dev/uq_and_adequacy/output/caltest_95q.tsv", header = T)
-caltest_labels = read.table("../neural_network_dev/uq_and_adequacy/data_files/labels_and_preds/uq_calibration_sets_0to20_labels.tsv",
-                            header = T, nrows = 1000)
-make_coverage_plot(caltest_coverage, n=1000)
+caltest_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_coverage.tsv", 
+                              header = T, row.names = 1)/100
+caltest_ci = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_ci.tsv", header = T)
+caltest_labels = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_labels.tsv", header = T)
+
+make_coverage_plot(caltest_coverage, n=nrow(caltest_ci))
+plot_ci_widths(caltest_ci[1:500,], caltest_ci[1:500,], caltest_labels[1:500,])
+
+nn=500
+plot(NULL, xlim = c(2,8), ylim = 1.25 * c(min(caltest_ci[1:nn,1] - caltest_labels[1:nn,1]), 
+                                       max(caltest_ci[1:nn,2] - caltest_labels[1:nn,1])))
+arrows(caltest_labels[1:nn,1], caltest_ci[1:nn,1] - caltest_labels[1:nn,1], caltest_labels[1:nn,1], 
+       caltest_ci[1:nn,2] - caltest_labels[1:nn,1], angle = 0)
+abline(h=0,col="red")
+
+plot(NULL, xlim = c(0,0.005), ylim = 1.25 * c(min(caltest_ci[1:nn,3] - caltest_labels[1:nn,2]), 
+                                       max(caltest_ci[1:nn,4] - caltest_labels[1:nn,2])))
+arrows(caltest_labels[1:nn,2], caltest_ci[1:nn,3] - caltest_labels[1:nn,2], caltest_labels[1:nn,2], 
+       caltest_ci[1:nn,4] - caltest_labels[1:nn,2], angle = 0)
+abline(h=0,col="red")
+
+plot(NULL, xlim = c(0,0.005), ylim = 1.25 * c(min(caltest_ci[1:nn,5] - caltest_labels[1:nn,3]), 
+                                       max(caltest_ci[1:nn,6] - caltest_labels[1:nn,3])))
+arrows(caltest_labels[1:nn,3], caltest_ci[1:nn,5] - caltest_labels[1:nn,3], caltest_labels[1:nn,3], 
+       caltest_ci[1:nn,6] - caltest_labels[1:nn,3], angle = 0)
+abline(h=0,col="red")
+
 
 #### True specified model ########
 extant_cnn = read.table("../neural_network_dev/output/extant_cnn_preds.tsv", header = T, row.names = NULL)
@@ -23,10 +45,10 @@ extant_labels = read.table("../neural_network_dev/output/extant_labels.tsv", hea
 extant_phylocomp_runtimes = read.table("../neural_network_dev/output/extant_phylocomp_runtimes.tsv", header = T, row.names = 1)
 
 extant_phylocomp_coverage = read.table("../neural_network_dev/data_files/extant_phylocomp_coverage.txt", header = T, row.names =1)
-cnn_phylocomp_coverage = read.table("../neural_network_dev/data_files/cnn_coverage.tsv", header =T, row.names = 1) / 100
+cnn_phylocomp_coverage = read.table("../neural_network_dev/data_files/fuck_cnn_coverage.tsv", header =T, row.names = 1) / 100
 
 extant_phylocomp_ci = read.table("../phylo_analysis/hpd_estimates/extant_phylocomp_0.95.ci", header = T, row.names = 1)
-cnn_phylocomp_ci = read.table("../neural_network_dev/uq_and_adequacy/output/phylocomp_cnn_95q.tsv", header = T)
+cnn_phylocomp_ci = read.table("../neural_network_dev/uq_and_adequacy/output/fuck_phylocomp_cnn_95q.tsv", header = T)
 
 plot_ci_widths(cnn_phylocomp_ci, extant_phylocomp_ci, extant_labels[,1:3])
 

@@ -14,6 +14,20 @@ import copy
 import cnn_utilities as cn
 import tensorflow as tf
 
+def make_output_files(coverage_dict, ci_dict, file_prefix):
+    df_caltest_coverage = pd.DataFrame(np.array([v for k, v in coverage_dict.items()]), 
+                                            columns = ["R0", "sample_rate", "migration_rate"], 
+                               index = ["5", "10", "25", "50", "75", "90", "95"])
+    df_caltest_coverage.to_csv(file_prefix + "_coverage.tsv", sep = "\t", index = True)
+    
+    # write 95% quantiles to file
+    R0_95_q = np.array((ci_dict[0.95][0][:,0], ci_dict[0.95][1][:,0])).transpose()
+    delta_95_q = np.array((ci_dict[0.95][0][:,1], ci_dict[0.95][1][:,1])).transpose()
+    m_95_q = np.array((ci_dict[0.95][0][:,2], ci_dict[0.95][1][:,2])).transpose()
+
+    df_caltest_95q = pd.DataFrame(np.hstack((R0_95_q, delta_95_q, m_95_q)),
+                             columns = ["R0_lq", "R0_uq", "delta_lq", "delta_uq", "m_lq", "m_uq"])
+    df_caltest_95q.to_csv(file_prefix + "_ci.tsv", sep = "\t", index = False)
 
 def plot_QI(preds_low, preds_up, labels, param_names = ["R0", "sample rate", "migration rate"], axis_labels = ["prediction", "truth"]):
     # Ensure labels, preds_low, and preds_up are at least two-dimensional
@@ -103,8 +117,6 @@ def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 
         print(str(quantiles[q]) + " finished: " + str(cov_q[-1]))
     return cov_q
 
-def make_CQR_coverage_set(ci, true, quantiles = [0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95]):
-    pass
     
 
 def get_CQR(preds, true, inner_quantile=0.95):
@@ -113,7 +125,6 @@ def get_CQR(preds, true, inner_quantile=0.95):
     parms=['R0', 'delta', 'm']    
  
     # compute non-comformity scores
-#     cqr = {}
     Q = np.array([])
     for i in range(preds.shape[2]):
         s = np.amax(np.array((preds[0][:,i] - true[:,i], true[:,i] - preds[1][:,i])), axis=0)
@@ -121,17 +132,14 @@ def get_CQR(preds, true, inner_quantile=0.95):
         # get 1 - alpha/2's quintile of non-comformity scores
         Q = np.append(Q, np.quantile(s, inner_quantile * (1 + 1/preds.shape[1])))
 
-        # adjust quantiles
-#         cqr[parms[i]] = np.array(([preds[0][:,i] - Q, preds[1][:,i] + Q]))
-
-    # return adjusted quantiles
-#     return cqr
     return Q
 
 
-def get_adaptive_CQR(preds, true, num_grid_points, inner_quantile=0.95):
+def get_adaptive_CQR(preds, true, num_grid_points = 10, inner_quantile=0.95):
     # preds axis 0 is the lower and upper quants, axis 1 is the replicates, and axis 2 is the params
-
+    low_up = ["lower", "upper"]
+    parms = ["R0", "delta", "m"]
+    
     # initialize dictionaries to hold interpolation functions
     interp_lower = {}
     interp_upper = {}
@@ -161,8 +169,8 @@ def get_adaptive_CQR(preds, true, num_grid_points, inner_quantile=0.95):
             adj_upper[j] = grid_point + Q
             
         # create 1D interpolation functions
-        interp_lower[i] = interp1d(grid_points, adj_lower, bounds_error=False, fill_value='extrapolate')
-        interp_upper[i] = interp1d(grid_points, adj_upper, bounds_error=False, fill_value='extrapolate')
+        interp_lower[parms[i]] = interp1d(grid_points, adj_lower, bounds_error=False, fill_value='extrapolate')
+        interp_upper[parms[i]] = interp1d(grid_points, adj_upper, bounds_error=False, fill_value='extrapolate')
 
     return interp_lower, interp_upper
 

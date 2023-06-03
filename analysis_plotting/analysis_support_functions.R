@@ -467,9 +467,9 @@ make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9
   boxplot(t(coverage), border ="white", col = "white", xlim = c(0.5, length(hpd) + 0.5), ylim = c(0,1),
           ylab = "observed", xlab= "expected", names = hpd, main = title, cex.lab = 1.3)
 
-  # coverage ~ beta((n+1)q, n-(n+1)q+1)
+    # coverage ~ beta((n+1)q, n-(n+1)q+1)
   sapply(seq(hpd), function(x){
-    ci = qbeta(c(0.025,0.975), (n-1)*hpd[x], n - (n+1)*hpd[x] + 1)
+    ci = qbeta(c(0.025,0.975), (n+1)*hpd[x], (n+1)*(1-hpd[x]))
     polygon(c(x-0.5, x+0.5, x+0.5, x-0.5), c(ci[1], ci[1], ci[2], ci[2]), col = rgb(0,0,0,0.1), border = NA)
   })
   lines(seq(length(hpd)+1)-0.5, c(hpd, rev(hpd)[1]), type = "s")
