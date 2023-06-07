@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 from scipy.spatial import cKDTree
 from scipy.interpolate import RegularGridInterpolator
 from scipy.interpolate import interp1d
+from scipy.interpolate import interp2d
+from scipy.interpolate import LinearNDInterpolator
 import copy
 import cnn_utilities as cn
 import tensorflow as tf
@@ -119,23 +121,87 @@ def make_coverage_set(x_train, y_train, x_test, y_test, quantiles = [0.05, 0.1, 
 
     
 
-def get_CQR(preds, true, inner_quantile=0.95):
+def get_CQR_constant(preds, true, inner_quantile=0.95, symmetric = True):
     #preds axis 0 is the lower and upper quants, axis 1 is the replicates, and axis 2 is the params
-        
-    parms=['R0', 'delta', 'm']    
  
     # compute non-comformity scores
-    Q = np.array([])
+    Q = np.array([]) if symmetric else np.empty((2, preds.shape[2]))
     for i in range(preds.shape[2]):
-        s = np.amax(np.array((preds[0][:,i] - true[:,i], true[:,i] - preds[1][:,i])), axis=0)
-
-        # get 1 - alpha/2's quintile of non-comformity scores
-        Q = np.append(Q, np.quantile(s, inner_quantile * (1 + 1/preds.shape[1])))
+        if symmetric:
+            # Symmetric non-comformity score
+            s = np.amax(np.array((preds[0][:,i] - true[:,i], true[:,i] - preds[1][:,i])), axis=0)
+            # get adjustment constant: 1 - alpha/2's quintile of non-comformity scores
+            Q = np.append(Q, np.quantile(s, inner_quantile * (1 + 1/preds.shape[1])))
+        else:
+            # Asymmetric non-comformity score
+            lower_s = np.array(true[:,i] - preds[0][:,i])
+            upper_s = np.array(true[:,i] - preds[1][:,i])
+            # get (lower_q adjustment, upper_q adjustment)
+            Q[:,i] = np.array((np.quantile(lower_s, (1 - inner_quantile)/2 * (1 + 1/preds.shape[1])),
+                             np.quantile(upper_s, (1 + inner_quantile)/2 * (1 + 1/preds.shape[1]))))
+            
 
     return Q
 
 
-def get_adaptive_CQR(preds, true, num_grid_points = 10, inner_quantile=0.95):
+from scipy.spatial.distance import euclidean
+
+def get_adaptive_CQR_fun(preds, true, num_neighbors=10000, num_grid_points = 20, inner_quantile=0.95):
+    # preds axis 0 is the lower and upper quants, axis 1 is the replicates, and axis 2 is the params
+    parms = ["R0", "delta", "m"]
+    
+    # initialize dictionaries to hold interpolation functions
+    interp_lower = {}
+    interp_upper = {}
+
+    for i in range(preds.shape[2]):  # loop over parameters
+        
+        # initialize KDTree
+        tree = cKDTree(preds[:,:,i].T)
+
+        # create 2D grid
+        grid_points_lower = np.linspace(0.9*np.min(preds[0,:,i]), 1.1*np.max(preds[0,:,i]), num_grid_points)
+        grid_points_upper = np.linspace(0.9*np.min(preds[1,:,i]), 1.1*np.max(preds[1,:,i]), num_grid_points)
+
+        grid_points = []
+        for lower in grid_points_lower:
+            for upper in grid_points_upper:
+                if lower < upper:  # ensure lower is less than upper
+                    grid_points.append((lower, upper))
+
+        # convert to numpy array for easier indexing
+        grid_points = np.array(grid_points)
+
+        
+        # initialize arrays to hold adjusted quantiles
+        num_valid_grid_points = len(grid_points)
+        adj_lower = np.empty(num_valid_grid_points)
+        adj_upper = np.empty(num_valid_grid_points)
+
+        for j, (grid_point_lower, grid_point_upper) in enumerate(grid_points):
+            # find the indices of the nearest points that fall into the current grid
+            grid_indices = tree.query([grid_point_lower, grid_point_upper], k=num_neighbors)[1]
+
+            # compute non-conformity scores for points in the grid
+            s = np.amax(np.array((preds[0][grid_indices, i] - true[grid_indices, i], 
+                                  true[grid_indices, i] - preds[1][grid_indices, i])), axis=0)
+            
+            # get 1 - alpha/2's quintile of non-conformity scores
+            Q = np.quantile(s, inner_quantile * (1 + 1/num_neighbors))
+            
+            # adjust quantiles
+            adj_lower[j] = grid_point_lower - Q
+            adj_upper[j] = grid_point_upper + Q
+
+        # create 2D interpolation functions
+        interp_lower[parms[i]] = LinearNDInterpolator(grid_points, adj_lower, fill_value = 1)
+        interp_upper[parms[i]] = LinearNDInterpolator(grid_points, adj_upper, fill_value = 1)
+
+    return interp_lower, interp_upper
+
+
+
+def old_get_adaptive_CQR_fun(preds, true, num_grid_points = 10, inner_quantile=0.95):
     # preds axis 0 is the lower and upper quants, axis 1 is the replicates, and axis 2 is the params
     low_up = ["lower", "upper"]
     parms = ["R0", "delta", "m"]
@@ -144,18 +210,43 @@ def get_adaptive_CQR(preds, true, num_grid_points = 10, inner_quantile=0.95):
     interp_lower = {}
     interp_upper = {}
     
+    
     for i in range(preds.shape[2]):
         # create grid for the current parameter
-        grid_points = np.linspace(np.min(preds[:,:,i]), np.max(preds[:,:,i]), num_grid_points)
-
+#         grid_points = np.linspace(np.min(preds[:,:,i]), np.max(preds[:,:,i]), num_grid_points)
+#         grid_points = np.linspace(np.sort(preds[0,:,i])[99], np.sort(preds[1,:,i])[-100], num_grid_points)
+        grid_points = np.linspace(np.sort(preds[0,:,i])[99], np.sort(preds[1,:,i])[-100], num_grid_points)
+    
         # initialize arrays to hold adjusted quantiles
         adj_lower = np.empty(num_grid_points)
         adj_upper = np.empty(num_grid_points)
         
         for j, grid_point in enumerate(grid_points):
             # find the indices of the points that fall into the current grid
-            grid_indices = np.logical_and(preds[0, :, i] <= grid_point, preds[1, :, i] >= grid_point)
+#             grid_indices = np.logical_and(preds[0, :, i] <= grid_point, preds[1, :, i] >= grid_point)
+
+
+            ##############
+
+
+#             grid_indices = abs(true[:,i] - grid_point) < (np.max(true[:,i]) - np.min(true[:,i]))/num_grid_points 
             
+    
+            diffs = np.abs(true[:,i] - grid_point)
+
+            # Get the indices that would sort the diffs array
+            sorted_indices = np.argsort(diffs)
+
+            # Determine the number of indices to keep
+            num_to_keep = int(len(diffs) / num_grid_points)
+
+            # Keep only the desired number of smallest differences
+            grid_indices = sorted_indices[:num_to_keep]
+            ############
+            
+            
+            
+#             print(len(preds[0][grid_indices, i]))
             # compute non-conformity scores for points in the grid
             s = np.amax(np.array((preds[0][grid_indices, i] - true[grid_indices, i], true[grid_indices, i] - preds[1][grid_indices, i])), axis=0)
             

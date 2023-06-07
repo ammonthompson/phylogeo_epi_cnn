@@ -15,7 +15,7 @@ caltest_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/vali
 caltest_ci = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_ci.tsv", header = T)
 caltest_labels = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_labels.tsv", header = T)
 
-make_coverage_plot(caltest_coverage, n=nrow(caltest_ci))
+make_coverage_plot(caltest_coverage, n=5000)
 plot_ci_widths(caltest_ci[1:500,], caltest_ci[1:500,], caltest_labels[1:500,])
 
 nn=500
@@ -44,11 +44,11 @@ extant_phylo = read.table("../neural_network_dev/output/extant_phylo_means.tsv",
 extant_labels = read.table("../neural_network_dev/output/extant_labels.tsv", header = T, row.names = NULL)
 extant_phylocomp_runtimes = read.table("../neural_network_dev/output/extant_phylocomp_runtimes.tsv", header = T, row.names = 1)
 
-extant_phylocomp_coverage = read.table("../neural_network_dev/data_files/extant_phylocomp_coverage.txt", header = T, row.names =1)
-cnn_phylocomp_coverage = read.table("../neural_network_dev/data_files/fuck_cnn_coverage.tsv", header =T, row.names = 1) / 100
+extant_phylocomp_coverage = read.table("../phylo_analysis/hpd_estimates/extant_phylocomp_coverage.txt", header = T, row.names =1)
+cnn_phylocomp_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/phylocomp_CQR_coverage.tsv", header =T, row.names = 1) / 100
 
 extant_phylocomp_ci = read.table("../phylo_analysis/hpd_estimates/extant_phylocomp_0.95.ci", header = T, row.names = 1)
-cnn_phylocomp_ci = read.table("../neural_network_dev/uq_and_adequacy/output/fuck_phylocomp_cnn_95q.tsv", header = T)
+cnn_phylocomp_ci = read.table("../neural_network_dev/uq_and_adequacy/output/phylocomp_CQR_ci.tsv", header = T)
 
 plot_ci_widths(cnn_phylocomp_ci, extant_phylocomp_ci, extant_labels[,1:3])
 
@@ -65,11 +65,11 @@ extant_miss_R0_cnn_preds = read.table("../neural_network_dev/output/misspec_R0_c
 extant_miss_R0_phylo_preds = read.table("../neural_network_dev/output/misspec_R0_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_R0_labels = read.table("../neural_network_dev/output/misspec_R0_labels.tsv", header = T, row.names= NULL)
 
-extant_miss_R0_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_R0_coverage_report.txt", header = T, row.names = 1)
-cnn_miss_R0_coverage = read.table("../neural_network_dev/data_files/missR0_cnn_coverage.tsv", header = T, row.names = 1) / 100
+extant_miss_R0_phylo_coverage = read.table("../phylo_analysis/hpd_estimates/misspec_R0_coverage_report.txt", header = T, row.names = 1)
+cnn_miss_R0_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/missR0_CQR_coverage.tsv", header = T, row.names = 1) / 100
 
 extant_miss_R0_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_R0_0.95.ci", header = T, row.names = 1)
-cnn_miss_R0_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missR0_cnn_95q.tsv", header = T)
+cnn_miss_R0_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missR0_CQR_ci.tsv", header = T)
 
 plot_ci_widths(cnn_miss_R0_ci, extant_miss_R0_ci, extant_miss_R0_labels[,1:3])
 
@@ -83,11 +83,11 @@ extant_miss_delta_cnn_preds = read.table("../neural_network_dev/output/misspec_d
 extant_miss_delta_phylo_preds = read.table("../neural_network_dev/output/misspec_delta_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_delta_labels = read.table("../neural_network_dev/output/misspec_delta_labels.tsv", header = T, row.names= NULL)
 
-extant_miss_delta_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_delta_coverage_report.txt", header = T, row.names = 1)
-cnn_miss_delta_coverage = read.table("../neural_network_dev/data_files/missDelta_cnn_coverage.tsv", header = T, row.names = 1) / 100
+extant_miss_delta_phylo_coverage = read.table("../phylo_analysis/hpd_estimates/misspec_delta_coverage_report.txt", header = T, row.names = 1)
+cnn_miss_delta_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/missDelta_CQR_coverage.tsv", header = T, row.names = 1) / 100
 
 extant_miss_delta_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_delta_0.95.ci", header = T, row.names = 1)
-cnn_miss_delta_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missDeltacnn_95q.tsv", header = T)
+cnn_miss_delta_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missDelta_CQR_ci.tsv", header = T)
 
 plot_ci_widths(cnn_miss_delta_ci, extant_miss_delta_ci, extant_miss_delta_labels[,1:3])
 
@@ -100,11 +100,11 @@ extant_miss_m_cnn_preds = read.table("../neural_network_dev/output/misspec_migra
 extant_miss_m_phylo_preds = read.table("../neural_network_dev/output/misspec_migration_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_m_labels = read.table("../neural_network_dev/output/misspec_migration_labels.tsv", header = T, row.names= NULL)
 
-extant_miss_m_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_m_coverage_report.txt", header = T, row.names = 1)
-cnn_miss_m_coverage = read.table("../neural_network_dev/data_files/missM_cnn_coverage.tsv", header = T, row.names = 1) / 100
+extant_miss_m_phylo_coverage = read.table("../phylo_analysis/hpd_estimates/misspec_m_coverage_report.txt", header = T, row.names = 1)
+cnn_miss_m_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/missM_CQR_coverage.tsv", header = T, row.names = 1) / 100
 
 extant_miss_m_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_m_0.95.ci", header = T, row.names = 1)
-cnn_miss_m_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missM_cnn_95q.tsv", header = T)
+cnn_miss_m_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missM_CQR_ci.tsv", header = T)
 
 plot_ci_widths(cnn_miss_m_ci, extant_miss_m_ci, extant_miss_m_labels[,1:3])
 
@@ -117,11 +117,11 @@ extant_miss_numloc_cnn_preds = read.table("../neural_network_dev/output/misspec_
 extant_miss_numloc_phylo_preds = read.table("../neural_network_dev/output/misspec_numloc_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_numloc_labels = read.table("../neural_network_dev/output/misspec_numloc_labels.tsv", header = T, row.names = NULL)
 
-extant_miss_numloc_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_numloc_coverage_report.txt", header = T, row.names = 1)
-cnn_miss_numloc_coverage = read.table("../neural_network_dev/data_files/missNumLoc_cnn_coverage.tsv", header = T, row.names = 1) / 100
+extant_miss_numloc_phylo_coverage = read.table("../phylo_analysis/hpd_estimates/misspec_numloc_coverage_report.txt", header = T, row.names = 1)
+cnn_miss_numloc_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/missNumLoc_CQR_coverage.tsv", header = T, row.names = 1) / 100
 
 extant_miss_numloc_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_numloc_0.95.ci", header = T, row.names = 1)
-cnn_miss_numloc_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missNumLoc_cnn_95q.tsv", header = T)
+cnn_miss_numloc_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missNumLoc_CQR_ci.tsv", header = T)
 
 plot_ci_widths(cnn_miss_numloc_ci, extant_miss_numloc_ci, extant_miss_numloc_labels[,1:3])
 
@@ -135,11 +135,11 @@ extant_miss_tree_phylo = read.table("../neural_network_dev/output/misspec_tree_p
 extant_miss_tree_labels = read.table("../neural_network_dev/output/misspec_tree_labels.tsv", header = T, row.names = NULL)
 extant_miss_tree_robfoulds = read.table("../neural_network_dev/data_files/extant_misspec_tree_proportion_branches_shared.tsv", header = F, row.names = 1)
 
-extant_miss_tree_phylo_coverage = read.table("../neural_network_dev/data_files/misspec_tree_coverage_report.txt", header = T, row.names = 1)
-cnn_miss_tree_coverage = read.table("../neural_network_dev/data_files/missTree_cnn_coverage.tsv", header = T, row.names = 1) / 100
+extant_miss_tree_phylo_coverage = read.table("../phylo_analysis/hpd_estimates/misspec_tree_coverage_report.txt", header = T, row.names = 1)
+cnn_miss_tree_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/missTree_CQR_coverage.tsv", header = T, row.names = 1) / 100
 
 extant_miss_tree_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_tree_0.95.ci", header = T, row.names = 1)
-cnn_miss_tree_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missTree_cnn_95q.tsv", header = T)
+cnn_miss_tree_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missTree_CQR_ci.tsv", header = T)
 
 plot_ci_widths(cnn_miss_tree_ci, extant_miss_tree_ci, extant_miss_tree_labels[,1:3])
 

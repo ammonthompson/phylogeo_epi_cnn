@@ -118,7 +118,7 @@ plot_ci_widths = function(cnn_ci, phylo_ci, labels){
   j_delta = my_intersect(cnn_ci[,3:4], phylo_ci[,3:4]) / my_union(cnn_ci[,3:4], phylo_ci[,3:4])
   j_m = my_intersect(cnn_ci[,5:6], phylo_ci[,5:6]) / my_union(cnn_ci[,5:6], phylo_ci[,5:6])
 
-  idx = seq(50)
+  idx = seq(cnn_R0)
   nn = seq(nrow(labels[idx,]))
   for(i in seq(3)){
     ylim = c(min(c(cnn_ci[idx,2*i-1], phylo_ci[idx,2*i-1])), max(c(cnn_ci[idx,2*i], phylo_ci[idx,2*i])))
