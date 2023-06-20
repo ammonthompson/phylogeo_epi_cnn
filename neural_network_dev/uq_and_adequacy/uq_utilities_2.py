@@ -6,6 +6,7 @@
 
 from statsmodels.nonparametric.smoothers_lowess import lowess
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.spatial import cKDTree
 from scipy.interpolate import RegularGridInterpolator
@@ -144,6 +145,129 @@ def get_CQR_constant(preds, true, inner_quantile=0.95, symmetric = True):
     return Q
 
 
+
+
+def get_CPI(x, y, frac=0.1, inner_quantile=0.95, grid_points = 20):
+    # Fit using residuals around CNN predictions
+    
+    data_stats_rel_weights = [1., 1.]
+    
+    # scale and shift columns 1 and 2 to have same spread as column 0
+    min_x0 = np.min(x[:,0])
+    max_x0 = np.max(x[:,0])
+    min_x1 = np.min(x[:,1])
+    max_x1 = np.max(x[:,1])
+    min_x2 = np.min(x[:,2])
+    max_x2 = np.max(x[:,2])
+    x[:,1] = min_x0 + (x[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
+    x[:,2] = min_x0 + (x[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
+    
+    sorted_idx = np.lexsort((x[:,2], x[:,1], x[:,0]))  # Sort by multiple columns
+    xx = x[sorted_idx,:]
+    yy = y[sorted_idx]
+    
+    lower_q = (1-inner_quantile)/2
+    upper_q = 1 - lower_q
+    tree = cKDTree(xx, balanced_tree = False)
+
+    xvals = [np.linspace(np.min(xx[:, i]), np.max(xx[:, i]), grid_points) for i in range(3)]
+    local_lower_q = np.empty((grid_points, grid_points, grid_points))  
+    local_upper_q = np.empty((grid_points, grid_points, grid_points))
+    
+    num_frac = int(round(frac * xx.shape[0]))
+    
+    for i in range(grid_points):
+        for j in range(grid_points):
+            for k in range(grid_points):
+                point = [xvals[0][i], xvals[1][j], xvals[2][k]]
+                
+                dist, indices = tree.query(point, num_frac)
+         
+                window_x = xx[indices, :]
+                window_y = yy[indices]
+                residuals = window_y - window_x[:, 0]  # Assuming y is 1-D
+                
+                # keep only close to prediction point[0]
+                residuals = residuals[np.where(np.abs(residuals) < 3 * np.std(residuals))]
+                nr = len(residuals)
+                rlq = lower_q * (1+nr)/nr if (lower_q * (1+nr)/nr) < 1. else 1.
+                ruq = upper_q * (1+nr)/nr if (upper_q * (1+nr)/nr) < 1. else 1.
+                local_lower_q[i, j, k] = point[0] + np.quantile(residuals, rlq)
+                local_upper_q[i, j, k] = point[0] + np.quantile(residuals, ruq)
+                
+                
+    # Create functions to interpolate the fits for out-of-sample values
+    smoothed_lower_local_q = RegularGridInterpolator((xvals[0], xvals[1], xvals[2]), 
+                                                     local_lower_q, method='linear', bounds_error=False, fill_value=None)
+    smoothed_upper_local_q = RegularGridInterpolator((xvals[0], xvals[1], xvals[2]), 
+                                                     local_upper_q, method='linear', bounds_error=False, fill_value=None)
+        
+    # output functions for exponentiating, rescaling and interpolation
+    def scaled_lq(a):
+        a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
+        a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
+        return np.exp(smoothed_lower_local_q(a))
+    def scaled_uq(a):
+        a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
+        a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
+        return np.exp(smoothed_upper_local_q(a))
+    
+    return None, scaled_lq, scaled_uq
+
+
+def get_conditional_CQR_fun(preds, true, inner_quantile=0.95, num_pts = 10):
+    #preds axis 0 is the lower and upper quants, axis 1 is the replicates, and axis 2 is the params
+    # doesnt work and I'm tired of trying to make it work
+ 
+    # num nearest neighbors
+    num_neighbors = preds.shape[1]//num_pts
+    print(num_neighbors)
+    # compute non-comformity scores
+    Q_low_fun = []
+    Q_high_fun = []
+    for i in range(preds.shape[2]):
+       
+        low_grid_pts = np.linspace(np.min(preds[0][:,i]), np.max(preds[0][:,i]), num_pts)
+        high_grid_pts = np.linspace(np.min(preds[1][:,i]), np.max(preds[1][:,i]), num_pts)
+        
+        # loop over 10 grid points
+        local_lower_q = []
+        local_upper_q = []
+        for pt_idx in range(num_pts):
+            lower_dif = np.abs(preds[0,:,i] - low_grid_pts[pt_idx])
+            upper_dif = np.abs(preds[1,:,i] - high_grid_pts[pt_idx])
+            
+            # get k nearest neighbors for the lower and upper separately
+#             window_low_idx = np.argpartition(lower_dif, num_neighbors)[:num_neighbors]
+#             window_high_idx = np.argpartition(upper_dif, num_neighbors)[:num_neighbors]
+            
+            low_t = np.quantile(lower_dif, num_neighbors/preds.shape[1])
+            up_t = np.quantile(upper_dif, num_neighbors/preds.shape[1])
+            window_lower_idx = np.where(lower_dif <= low_t)
+            window_upper_idx = np.where(upper_dif <= up_t)
+            
+            
+            # Asymmetric non-comformity score
+            lower_s = np.array(true[window_lower_idx,i] - preds[0,window_lower_idx,i])
+            upper_s = np.array(true[window_upper_idx,i] - preds[1,window_upper_idx,i])
+            
+            # get (lower_q adjustment, upper_q adjustment)
+            lower_Q = np.array(np.quantile(lower_s, (1 - inner_quantile)/2 * (1 + 1/num_neighbors)))
+            upper_Q = np.array(np.quantile(upper_s, (1 + inner_quantile)/2 * (1 + 1/num_neighbors)))
+            
+#             print("quantile: " + str(inner_quantile) + "   lower: " + str(lower_Q) + "   upper: " + str(upper_Q))
+            
+            # add local adjusted quantile at grid point to quantile arrays
+            local_lower_q.append(low_grid_pts[pt_idx] + lower_Q)
+            local_upper_q.append(high_grid_pts[pt_idx] + upper_Q)
+            
+        Q_low_fun.append(interp1d(low_grid_pts, local_lower_q, kind='linear', fill_value='extrapolate'))
+        Q_high_fun.append(interp1d(high_grid_pts, local_upper_q, kind='linear', fill_value='extrapolate'))
+        print(" ")
+
+    return np.array((Q_low_fun, Q_high_fun))
+
+
 from scipy.spatial.distance import euclidean
 
 def get_adaptive_CQR_fun(preds, true, num_neighbors=10000, num_grid_points = 20, inner_quantile=0.95):
@@ -199,144 +323,4 @@ def get_adaptive_CQR_fun(preds, true, num_neighbors=10000, num_grid_points = 20,
 
     return interp_lower, interp_upper
 
-
-
-def old_get_adaptive_CQR_fun(preds, true, num_grid_points = 10, inner_quantile=0.95):
-    # preds axis 0 is the lower and upper quants, axis 1 is the replicates, and axis 2 is the params
-    low_up = ["lower", "upper"]
-    parms = ["R0", "delta", "m"]
-    
-    # initialize dictionaries to hold interpolation functions
-    interp_lower = {}
-    interp_upper = {}
-    
-    
-    for i in range(preds.shape[2]):
-        # create grid for the current parameter
-#         grid_points = np.linspace(np.min(preds[:,:,i]), np.max(preds[:,:,i]), num_grid_points)
-#         grid_points = np.linspace(np.sort(preds[0,:,i])[99], np.sort(preds[1,:,i])[-100], num_grid_points)
-        grid_points = np.linspace(np.sort(preds[0,:,i])[99], np.sort(preds[1,:,i])[-100], num_grid_points)
-    
-        # initialize arrays to hold adjusted quantiles
-        adj_lower = np.empty(num_grid_points)
-        adj_upper = np.empty(num_grid_points)
-        
-        for j, grid_point in enumerate(grid_points):
-            # find the indices of the points that fall into the current grid
-#             grid_indices = np.logical_and(preds[0, :, i] <= grid_point, preds[1, :, i] >= grid_point)
-
-
-            ##############
-
-
-#             grid_indices = abs(true[:,i] - grid_point) < (np.max(true[:,i]) - np.min(true[:,i]))/num_grid_points 
-            
-    
-            diffs = np.abs(true[:,i] - grid_point)
-
-            # Get the indices that would sort the diffs array
-            sorted_indices = np.argsort(diffs)
-
-            # Determine the number of indices to keep
-            num_to_keep = int(len(diffs) / num_grid_points)
-
-            # Keep only the desired number of smallest differences
-            grid_indices = sorted_indices[:num_to_keep]
-            ############
-            
-            
-            
-#             print(len(preds[0][grid_indices, i]))
-            # compute non-conformity scores for points in the grid
-            s = np.amax(np.array((preds[0][grid_indices, i] - true[grid_indices, i], true[grid_indices, i] - preds[1][grid_indices, i])), axis=0)
-            
-            # get 1 - alpha/2's quintile of non-comformity scores
-            finite_n_factor = 1 + 1/sum(grid_indices)
-            q_adj_finite_n = inner_quantile * finite_n_factor if (inner_quantile * finite_n_factor)  <= 1 else 1
-            Q = np.quantile(s, q_adj_finite_n)
-            
-            # adjust quantiles
-            adj_lower[j] = grid_point - Q
-            adj_upper[j] = grid_point + Q
-            
-        # create 1D interpolation functions
-        interp_lower[parms[i]] = interp1d(grid_points, adj_lower, bounds_error=False, fill_value='extrapolate')
-        interp_upper[parms[i]] = interp1d(grid_points, adj_upper, bounds_error=False, fill_value='extrapolate')
-
-    return interp_lower, interp_upper
-
-
-
-
-
-def get_CPI(x, y, frac=0.1, inner_quantile=0.95, grid_points = 20):
-    # Fit using residuals around CNN predictions
-    
-    data_stats_rel_weights = [1., 1.]
-    
-    # scale and shift columns 1 and 2 to have same spread as column 0
-    min_x0 = np.min(x[:,0])
-    max_x0 = np.max(x[:,0])
-    min_x1 = np.min(x[:,1])
-    max_x1 = np.max(x[:,1])
-    min_x2 = np.min(x[:,2])
-    max_x2 = np.max(x[:,2])
-    x[:,1] = min_x0 + (x[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
-    x[:,2] = min_x0 + (x[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
-    
-    sorted_idx = np.lexsort((x[:,2], x[:,1], x[:,0]))  # Sort by multiple columns
-    xx = x[sorted_idx,:]
-    yy = y[sorted_idx]
-    
-    lower_q = (1-inner_quantile)/2
-    upper_q = 1 - lower_q
-    tree = cKDTree(xx, balanced_tree = False)
-
-    xvals = [np.linspace(np.min(xx[:, i]), np.max(xx[:, i]), grid_points) for i in range(3)]
-    local_lower_q = np.empty((grid_points, grid_points, grid_points))  
-    local_upper_q = np.empty((grid_points, grid_points, grid_points))
-    
-    num_frac = int(round(frac * xx.shape[0]))
-    
-    for i in range(grid_points):
-        for j in range(grid_points):
-            for k in range(grid_points):
-                point = [xvals[0][i], xvals[1][j], xvals[2][k]]
-                
-                dist, indices = tree.query(point, num_frac)
-         
-                window_x = xx[indices, :]
-                window_y = yy[indices]
-                residuals = window_y - window_x[:, 0]  # Assuming y is 1-D
-                # keep only close to prediction point[0]
-#                 mean_d = np.mean(point[0] - window_x[:,0])
-#                 std_d = np.std(point[0] - window_x[:,0])
-#                 residuals = residuals[np.where(abs(point[0] - window_x[:,0] - mean_d) < (5 * std_d))]
-                residuals = residuals[np.where(np.abs(residuals) < 3 * np.std(residuals))]
-                nr = len(residuals)
-#                 print(nr)
-                rlq = lower_q * (1+nr)/nr if (lower_q * (1+nr)/nr) < 1. else 1.
-                ruq = upper_q * (1+nr)/nr if (upper_q * (1+nr)/nr) < 1. else 1.
-                local_lower_q[i, j, k] = point[0] + np.quantile(residuals, rlq)
-                local_upper_q[i, j, k] = point[0] + np.quantile(residuals, ruq)
-                
-#                 print(np.exp([point[0], local_lower_q[i, j, k], local_upper_q[i, j, k]]))
-                
-    # Create functions to interpolate the fits for out-of-sample values
-    smoothed_lower_local_q = RegularGridInterpolator((xvals[0], xvals[1], xvals[2]), 
-                                                     local_lower_q, method='linear', bounds_error=False, fill_value=None)
-    smoothed_upper_local_q = RegularGridInterpolator((xvals[0], xvals[1], xvals[2]), 
-                                                     local_upper_q, method='linear', bounds_error=False, fill_value=None)
-        
-    # output functions for exponentiating, rescaling and interpolation
-    def scaled_lq(a):
-        a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
-        a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
-        return np.exp(smoothed_lower_local_q(a))
-    def scaled_uq(a):
-        a[:,1] = min_x0 + (a[:,1] - min_x1)/(max_x1 - min_x1) * (max_x0 - min_x0) * data_stats_rel_weights[0]
-        a[:,2] = min_x0 + (a[:,2] - min_x2)/(max_x2 - min_x2) * (max_x0 - min_x0) * data_stats_rel_weights[1]
-        return np.exp(smoothed_upper_local_q(a))
-    
-    return None, scaled_lq, scaled_uq
 

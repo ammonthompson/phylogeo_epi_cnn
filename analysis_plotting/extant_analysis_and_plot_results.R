@@ -9,14 +9,24 @@ source("analysis_support_functions.R")
 # output parent directory
 figure_relative_dir = "figures/"
 
+xx_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/small_validation_CQR_coverage.tsv",
+                         header = T, row.names = 1)/100
+xx_labels = read.table("../neural_network_dev/uq_and_adequacy/output/small_validation_CQR_labels.tsv",
+                       header = T)
+make_coverage_figure(xx_coverage, xx_coverage, n=138, file_prefix = "figures/jpeg_files/xx_CPI_coverage",
+                     title = c("Conformalized q-CNN Coverage","Raw q-CNN Coverage"), mkfig=T, cx = 1, wh = c(1,1))
+
 #### UQ calibration ############
 caltest_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_coverage.tsv", 
                               header = T, row.names = 1)/100
+uncal_test_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/uncalibrated_validation_CQR_coverage.tsv", 
+                              header = T, row.names = 1)/100
+
 caltest_ci = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_ci.tsv", header = T)
 caltest_labels = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_labels.tsv", header = T)
 
-make_coverage_plot(caltest_coverage, n=5000)
-plot_ci_widths(caltest_ci[1:500,], caltest_ci[1:500,], caltest_labels[1:500,])
+make_coverage_figure(caltest_coverage, uncal_test_coverage, n=5000, file_prefix = "figures/jpeg_files/CPI_coverage",
+                     title = c("Conformalized q-CNN Coverage","Raw q-CNN Coverage"), mkfig=T, cx = 1, wh = c(1,1))
 
 nn=500
 plot(NULL, xlim = c(2,8), ylim = 1.25 * c(min(caltest_ci[1:nn,1] - caltest_labels[1:nn,1]), 
@@ -50,7 +60,8 @@ cnn_phylocomp_coverage = read.table("../neural_network_dev/uq_and_adequacy/outpu
 extant_phylocomp_ci = read.table("../phylo_analysis/hpd_estimates/extant_phylocomp_0.95.ci", header = T, row.names = 1)
 cnn_phylocomp_ci = read.table("../neural_network_dev/uq_and_adequacy/output/phylocomp_CQR_ci.tsv", header = T)
 
-plot_ci_widths(cnn_phylocomp_ci, extant_phylocomp_ci, extant_labels[,1:3])
+make_ci_width_figure(cnn_phylocomp_ci, extant_phylocomp_ci, extant_labels[,1:3], 
+                     file_prefix = paste0(figure_relative_dir, "jpeg_files/phylocomp_ci"))
 
 make_experiment_figure(extant_cnn, extant_phylo, extant_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_figure"),
@@ -71,7 +82,8 @@ cnn_miss_R0_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/
 extant_miss_R0_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_R0_0.95.ci", header = T, row.names = 1)
 cnn_miss_R0_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missR0_CQR_ci.tsv", header = T)
 
-plot_ci_widths(cnn_miss_R0_ci, extant_miss_R0_ci, extant_miss_R0_labels[,1:3])
+make_ci_width_figure(cnn_miss_R0_ci, extant_miss_R0_ci, extant_miss_R0_labels[,1:3], 
+                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missR0_ci"))
 
 make_experiment_figure(extant_miss_R0_cnn_preds, extant_miss_R0_phylo_preds, extant_miss_R0_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_R0_figure"),
@@ -89,7 +101,8 @@ cnn_miss_delta_coverage = read.table("../neural_network_dev/uq_and_adequacy/outp
 extant_miss_delta_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_delta_0.95.ci", header = T, row.names = 1)
 cnn_miss_delta_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missDelta_CQR_ci.tsv", header = T)
 
-plot_ci_widths(cnn_miss_delta_ci, extant_miss_delta_ci, extant_miss_delta_labels[,1:3])
+make_ci_width_figure(cnn_miss_delta_ci, extant_miss_delta_ci, extant_miss_delta_labels[,1:3], 
+                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missDelta_ci"))
 
 make_experiment_figure(extant_miss_delta_cnn_preds, extant_miss_delta_phylo_preds, extant_miss_delta_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_delta_figure"),
@@ -106,7 +119,8 @@ cnn_miss_m_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/m
 extant_miss_m_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_m_0.95.ci", header = T, row.names = 1)
 cnn_miss_m_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missM_CQR_ci.tsv", header = T)
 
-plot_ci_widths(cnn_miss_m_ci, extant_miss_m_ci, extant_miss_m_labels[,1:3])
+make_ci_width_figure(cnn_miss_m_ci, extant_miss_m_ci, extant_miss_m_labels[,1:3], 
+                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missM_ci"))
 
 make_experiment_figure(extant_miss_m_cnn_preds, extant_miss_m_phylo_preds, extant_miss_m_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_m_figure"),
@@ -123,7 +137,8 @@ cnn_miss_numloc_coverage = read.table("../neural_network_dev/uq_and_adequacy/out
 extant_miss_numloc_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_numloc_0.95.ci", header = T, row.names = 1)
 cnn_miss_numloc_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missNumLoc_CQR_ci.tsv", header = T)
 
-plot_ci_widths(cnn_miss_numloc_ci, extant_miss_numloc_ci, extant_miss_numloc_labels[,1:3])
+make_ci_width_figure(cnn_miss_numloc_ci, extant_miss_numloc_ci, extant_miss_numloc_labels[,1:3], 
+                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missNumloc_ci"))
 
 make_experiment_figure(extant_miss_numloc_cnn_preds, extant_miss_numloc_phylo_preds, extant_miss_numloc_labels, 
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_numloc_figure"),
@@ -133,7 +148,7 @@ make_experiment_figure(extant_miss_numloc_cnn_preds, extant_miss_numloc_phylo_pr
 extant_miss_tree_cnn = read.table("../neural_network_dev/output/misspec_tree_cnn_preds.tsv", header = T, row.names =NULL)
 extant_miss_tree_phylo = read.table("../neural_network_dev/output/misspec_tree_phylo_means.tsv", header = T, row.names = NULL)
 extant_miss_tree_labels = read.table("../neural_network_dev/output/misspec_tree_labels.tsv", header = T, row.names = NULL)
-extant_miss_tree_robfoulds = read.table("../neural_network_dev/data_files/extant_misspec_tree_proportion_branches_shared.tsv", header = F, row.names = 1)
+extant_miss_tree_jaccard = read.table("../neural_network_dev/data_files/extant_misspec_tree_proportion_branches_shared.tsv", header = F, row.names = 1)
 
 extant_miss_tree_phylo_coverage = read.table("../phylo_analysis/hpd_estimates/misspec_tree_coverage_report.txt", header = T, row.names = 1)
 cnn_miss_tree_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/missTree_CQR_coverage.tsv", header = T, row.names = 1) / 100
@@ -141,13 +156,14 @@ cnn_miss_tree_coverage = read.table("../neural_network_dev/uq_and_adequacy/outpu
 extant_miss_tree_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_tree_0.95.ci", header = T, row.names = 1)
 cnn_miss_tree_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missTree_CQR_ci.tsv", header = T)
 
-plot_ci_widths(cnn_miss_tree_ci, extant_miss_tree_ci, extant_miss_tree_labels[,1:3])
+make_ci_width_figure(cnn_miss_tree_ci, extant_miss_tree_ci, extant_miss_tree_labels[,1:3], 
+                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missTree_ci"))
 
 make_experiment_figure(extant_miss_tree_cnn, extant_miss_tree_phylo, extant_miss_tree_labels,
                        file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_tree_figure"),
                        phy_coverage = extant_miss_tree_phylo_coverage, cnn_coverage = cnn_miss_tree_coverage)
 
-quantile(extant_miss_tree_robfoulds[,1], p = c(0.025, 0.5, 0.975))
+quantile(extant_miss_tree_jaccard[,1], p = c(0.025, 0.5, 0.975))
 
 ######### MTBD CNN real data covid ###############
 nadeau2021_cnn_pred = read.table("../neural_network_dev/output/mtbd_nadeau2021_cnn_preds_full_and_a2.tsv", header =T, row.names = NULL)
@@ -165,9 +181,21 @@ make_mtbd_nadeau_plots(nadeau2021_cnn_pred, nadeau2021_R0_log,
                        file_prefix =paste0(figure_relative_dir, 
                                            "jpeg_files/nadeau2021_mtbd_compare"))
 
+  # compare delta and m estimates
+gamma_cnn = 0.05
+gamma_nadeau = 36.5
 
+# scale so rates are in units of recovery + sample period
+sample_prop_cnn = nadeau2021_cnn_pred$sample_rate/(gamma_cnn + nadeau2021_cnn_pred$sample_rate)
+m_prop_cnn = nadeau2021_cnn_pred$migration_rate/(gamma_cnn + nadeau2021_cnn_pred$sample_rate)
+sample_prop_cnn_ci = nadeau2021_cnn_ci[6,]/(gamma_cnn + nadeau2021_cnn_pred$sample_rate)
+m_prop_cnn_ci = nadeau2021_cnn_ci[7,]/(gamma_cnn + nadeau2021_cnn_pred$sample_rate)
 
+nad_sample_proportion_range = c(0.0025, 0.15) # already in units of recovery + sample period
+nad_m_proportion_range = c(0.1,10)/gamma_nadeau
 
+cat("sample prop Nadaeau: ", nad_sample_proportion_range, "   CNN: ", c(min(sample_prop_cnn_ci), max(sample_prop_cnn_ci)), "\n",
+    "migration prop Nadaeau: ", nad_m_proportion_range, "   CNN: ", c(min(m_prop_cnn_ci), max(m_prop_cnn_ci)), "\n")
 
 ##############################################
 ################ BEST analyses ###############

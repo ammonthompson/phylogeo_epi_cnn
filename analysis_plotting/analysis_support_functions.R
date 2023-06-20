@@ -1,6 +1,7 @@
 library(vioplot)
 library(expm)
 library(BEST)
+library(matrixStats)
 
 # fig dims
 fig_scale = 10
@@ -98,43 +99,15 @@ make_panel_label = function(label = ""){
 }
 
 my_intersect = function(interval1, interval2){
-  return((interval1[,2] - interval1[,1]) - abs(interval1[,2] - interval2[,2]) - abs(interval1[,1] - interval2[,1]) )
+  return(rowMaxs(cbind(rep(0,nrow(interval1)), rowMins(as.matrix(cbind(interval1[,2], interval2[,2]))) - 
+                   cbind(rowMaxs(as.matrix(cbind(interval1[,1], interval2[,1])))))))
 }
 
 my_union = function(interval1, interval2){
-  return((interval1[,2] - interval2[,1]) + (interval2[,2] - interval2[,1]) - my_intersect(interval1, interval2))
+  return((interval1[,2] - interval1[,1]) + (interval2[,2] - interval2[,1]) - 
+           my_intersect(interval1, interval2))
 }
 
-plot_ci_widths = function(cnn_ci, phylo_ci, labels){
-  cnn_R0 = cnn_ci[,2] - cnn_ci[,1]
-  cnn_delta = cnn_ci[,4] - cnn_ci[,3]
-  cnn_m = cnn_ci[,6] - cnn_ci[,5]
-  
-  phy_R0 = phylo_ci[,2] - phylo_ci[,1]
-  phy_delta = phylo_ci[,4] - phylo_ci[,3]
-  phy_m = phylo_ci[,6] - phylo_ci[,5]
-  
-  j_r0 = my_intersect(cnn_ci[,1:2], phylo_ci[,1:2]) / my_union(cnn_ci[,1:2], phylo_ci[,1:2])
-  j_delta = my_intersect(cnn_ci[,3:4], phylo_ci[,3:4]) / my_union(cnn_ci[,3:4], phylo_ci[,3:4])
-  j_m = my_intersect(cnn_ci[,5:6], phylo_ci[,5:6]) / my_union(cnn_ci[,5:6], phylo_ci[,5:6])
-
-  idx = seq(cnn_R0)
-  nn = seq(nrow(labels[idx,]))
-  for(i in seq(3)){
-    ylim = c(min(c(cnn_ci[idx,2*i-1], phylo_ci[idx,2*i-1])), max(c(cnn_ci[idx,2*i], phylo_ci[idx,2*i])))
-    plot(NULL, xlim = c(0,length(idx)),ylim = ylim, pch = 16)
-    arrows(nn-0.2, cnn_ci[idx,2*i], nn-0.2, cnn_ci[idx,2*i-1], col= "blue", angle = 0, lwd = 2)
-    arrows(nn+0.2, phylo_ci[idx,2*i], nn+0.2, phylo_ci[idx,2*i-1], col= "red", angle = 0, lwd = 2)
-    points(labels[idx,i], pch = 16)
-    
-    
-    plot(cnn_ci[,2*i] - cnn_ci[,2*i-1], phylo_ci[,2*i] - phylo_ci[,2*i-1])
-    abline(0,1,col = "red")
-  }
-  cat("R0: ", mean(cnn_R0/phy_R0), " delta: ", mean(cnn_delta/phy_delta), " m: ", mean(cnn_m / phy_m), "\n")
-  cat("jaccard:  ", "R0 = ", mean(j_r0), " delta = ", mean(j_delta), " m = ", mean(j_m), "\n" )
-  
-}
 
 # figure making
 make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix = NULL, 
@@ -149,26 +122,11 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   root_labels = labels[,-c(1:3)]
   
   
-  # if(!is.null(file_prefix)) jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
-  #                                res = 400, width = 1*fig_scale, height = 0.8*fig_scale)
-  # 
-  # grid = matrix(c(seq(9),10, 10, 11), ncol = 4)
-  # layout(grid, widths = c(1,1,1,1))
-  
+
   if(!is.null(file_prefix)) jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
                                  res = 400, width = 1*fig_scale, height = 1*fig_scale)
   
-  # grid = matrix(c(1,2,3,10,4,5,6,10,7,8,9,11,12,12,13,13), ncol = 4, nrow = 4, byrow=F)
-  
-  # grid = matrix(c(1,1,2,2,3,3,10,10,
-  #                 1,1,2,2,3,3,10,10,
-  #                 4,4,5,5,6,6,10,10,
-  #                 4,4,5,5,6,6,10,10,
-  #                 7,7,8,8,9,9,10,10,
-  #                 7,7,8,8,9,9,10,10,
-  #                 11,11,11,12,12,12,13,13,
-  #                 11,11,11,12,12,12,13,13), ncol = 8, nrow = 8, byrow=F)
-  
+
   grid = matrix(c(1,1,2,2,3,3,10,10,
                   1,1,2,2,3,3,10,10,
                   4,4,5,5,6,6,11,11,
@@ -190,7 +148,7 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   
   make_coverage_figure(phy_coverage, cnn_coverage, 
                        file_prefix = NULL,
-                       n = nrow(cnn_preds), title = c("Bayesian coverage", "CNN coverage"),
+                       n = nrow(cnn_preds), title = c("Bayesian coverage", "qCNN coverage"),
                        mkfig = F, panel_label = "C")
  
    make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = "D")
@@ -201,6 +159,52 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   
   
 }
+
+make_ci_width_figure = function(cnn_ci, phylo_ci, labels, file_prefix = NULL){
+  cnn_R0 = cnn_ci[,2] - cnn_ci[,1]
+  cnn_delta = cnn_ci[,4] - cnn_ci[,3]
+  cnn_m = cnn_ci[,6] - cnn_ci[,5]
+  
+  phy_R0 = phylo_ci[,2] - phylo_ci[,1]
+  phy_delta = phylo_ci[,4] - phylo_ci[,3]
+  phy_m = phylo_ci[,6] - phylo_ci[,5]
+  
+  params = c(expression("R"["0"]),  expression(delta[""]), expression("m"[""]))
+  
+  j_r0 = my_intersect(cnn_ci[,1:2], phylo_ci[,1:2]) / my_union(cnn_ci[,1:2], phylo_ci[,1:2])
+  j_delta = my_intersect(cnn_ci[,3:4], phylo_ci[,3:4]) / my_union(cnn_ci[,3:4], phylo_ci[,3:4])
+  j_m = my_intersect(cnn_ci[,5:6], phylo_ci[,5:6]) / my_union(cnn_ci[,5:6], phylo_ci[,5:6])
+  
+  if(!is.null(file_prefix)) jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
+                                 res = 400, width = 1*fig_scale, height = 0.65*fig_scale)
+  layout(matrix(seq(6),nrow=2,byrow=F))
+  idx = seq(25)
+  nn = seq(nrow(labels[idx,]))
+  for(i in seq(3)){
+    ylim = c(min(c(cnn_ci[idx,2*i-1], phylo_ci[idx,2*i-1])), max(c(cnn_ci[idx,2*i], phylo_ci[idx,2*i])))
+    #sort by true_value
+    sorted_idx = sort(labels[idx,i], index.return = T)$ix
+    plot(NULL, xlim = c(0,length(idx)),ylim = ylim, pch = 16, ylab = "", main = params[i], cex.main = 1.5)
+    arrows(nn-0.2, cnn_ci[sorted_idx,2*i], nn-0.2, cnn_ci[sorted_idx,2*i-1], col= "blue", angle = 0, lwd = 2)
+    arrows(nn+0.2, phylo_ci[sorted_idx,2*i], nn+0.2, phylo_ci[sorted_idx,2*i-1], col= "red", angle = 0, lwd = 2)
+    points(labels[sorted_idx,i], pch = 16)
+    
+    if(i == 1) legend(1,8, legend = c("qCNN 95% CPI", "Bayes 95% HPI"),  
+                      border = "white", fill = c("blue","red"), bty = 'n')
+    
+    # scatterplot ci widths of cnn and phylo
+    ylab = ifelse(i == 1, "Bayesian 95% HPI width", "")
+    plot(cnn_ci[,2*i] - cnn_ci[,2*i-1], phylo_ci[,2*i] - phylo_ci[,2*i-1], 
+         ylab = ylab, xlab = "qCNN 95% CPI width", cex.lab = 1.25)
+    abline(0,1,col = "red")
+  }
+  if(!is.null(file_prefix)) dev.off()
+  cat("R0: ", mean(cnn_R0/phy_R0), " delta: ", mean(cnn_delta/phy_delta), " m: ", mean(cnn_m / phy_m), "\n")
+  cat("jaccard:  ", "R0 = ", mean(j_r0), " delta = ", mean(j_delta), " m = ", mean(j_m), "\n" )
+  layout(1)
+  
+}
+
 
 make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = NULL, file_type = "pdf",
                               panel_label = NULL, set_layout = TRUE, phylo_row_main_names = NULL, 
@@ -240,20 +244,9 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
            main = phylo_row_main_names[i], pch = 16, col = rgb(0,0,1,0.8), cex.main = 1.75, cex.lab = 1.25)
       abline(0,1,col = "black")
       text(xlim[1], 0.98*ylim[2], labels = round(cor(cnn_pred[,i], label[,i]), digits = 2), pos = 4, cex = 1.25) # experimental
-      # text(0.99 * xlim[2], 1.02*ylim[1], labels = paste0("Coverage: ", round(cnn_coverage[i], digits = 2)), pos = 2, cex = 1.25) # experimental
-      # text(xlim[1], 0.98*ylim[2], labels = round(cnn_coverage[i], digits = 2), pos = 4, cex = 1.25) # experimental
-      
-      # panel label
-      # if(i == 1 & panel_label == TRUE){
-      #   pplt <- par("plt")
-      #   adjx <- (0 - pplt[1]) / (pplt[2] - pplt[1])
-      #   liney = par("mar")[3] - 1.75
-      #   mtext("A", side = 3, cex = 1.5, adj = adjx, line = liney)
-      # }
-      
+
       if(i == 1 & (! is.null(panel_label))) make_panel_label(panel_label)
-      
-      
+
       #Phylo scatterplots
       xlim = c(min(phylo_pred[,i]), max(phylo_pred[,i]))
       ylim = c(min(label[,i]), max(label[,i]))
@@ -261,10 +254,6 @@ make_scatter_plot <- function(cnn_pred, phylo_pred, label = NULL, file_prefix = 
            xlim = xlim, ylim = ylim, main = "", pch = 16, col = rgb(1,0,0,0.8), cex.lab = 1.25)
       abline(0,1,col = "black")
       text(xlim[1], 0.98*ylim[2], labels = round(cor(phylo_pred[,i], label[,i]), digits = 2), pos = 4, cex = 1.25) # experimental
-      # text(0.99*xlim[2], 1.02*ylim[1], labels = paste0("Coverage: ", round(phylo_coverage[i], digits = 2)), pos = 2, cex = 1.25) # experimental
-      # text(xlim[1], 0.98*ylim[2], labels = round(phylo_coverage[i], digits = 2), pos = 4,  cex = 1.25) # experimental
-      
-      
     }
     ylabel = ifelse((i == 1), "Mean Posterior Estimate", "")
     
@@ -443,21 +432,24 @@ make_runtime_scatter_plots <- function(phylo_runtime_numtips_treesize,
 }
 
 
-make_coverage_figure <- function(phylo_coverage, cnn_coverage, file_prefix, n, title = c("",""), mkfig=T, panel_label=NULL){
+make_coverage_figure <- function(phylo_coverage, cnn_coverage, file_prefix, n, 
+                                 title = c("",""), mkfig=T, panel_label=NULL, cx=1, wh=c(1,1)){
   if(mkfig){ 
     jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
-       res = 400, width = 0.95*fig_scale, height = 0.5*fig_scale)
-    layout(matrix(seq(2), ncol=2))
+         res = 400, width = 0.95*fig_scale*wh[1], height = 0.5*fig_scale*wh[2])
+    if(! is.null(phylo_coverage))
+      layout(matrix(seq(2), ncol=2))
   }
-  make_coverage_plot(cnn_coverage, file_prefix = file_prefix, n=n, title = title[2], panel_label = panel_label )
-  make_coverage_plot(phylo_coverage, file_prefix = file_prefix, n=n, title = title[1])
+  make_coverage_plot(cnn_coverage, file_prefix = file_prefix, n=n, title = title[2], panel_label = panel_label, cx = cx )
+  if(! is.null(phylo_coverage))
+    make_coverage_plot(phylo_coverage, file_prefix = file_prefix, n=n, title = title[1], cx = cx)
   if(mkfig) dev.off()
 }
 
 
 make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
                                n = 100,pcolor = c("purple", "orange", "darkgreen"), title = "", panel_label=NULL,
-                               plegend = c(expression("R"[0]), expression(delta), "m"), file_prefix = NULL){
+                               plegend = c(expression("R"[0]), expression(delta), "m"), file_prefix = NULL, cx=1){
   
   
   top_right_mar = par("mar")[c(3,4)] * 0.5
@@ -467,14 +459,15 @@ make_coverage_plot <- function(coverage, hpd = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9
   boxplot(t(coverage), border ="white", col = "white", xlim = c(0.5, length(hpd) + 0.5), ylim = c(0,1),
           ylab = "observed", xlab= "expected", names = hpd, main = title, cex.lab = 1.3)
 
-    # coverage ~ beta((n+1)q, n-(n+1)q+1)
+  # coverage ~ beta((n+1)q, n-(n+1)q+1)
   sapply(seq(hpd), function(x){
     ci = qbeta(c(0.025,0.975), (n+1)*hpd[x], (n+1)*(1-hpd[x]))
     polygon(c(x-0.5, x+0.5, x+0.5, x-0.5), c(ci[1], ci[1], ci[2], ci[2]), col = rgb(0,0,0,0.1), border = NA)
   })
   lines(seq(length(hpd)+1)-0.5, c(hpd, rev(hpd)[1]), type = "s")
-  sapply(seq(ncol(coverage)), function(x) points(seq(hpd) + runif(hpd, -0.02,0.02), lwd = 1.75,
-                                    cex = 1.25, coverage[,x], col = pcolor[x]))
+  # add coverage data points
+  sapply(seq(ncol(coverage)), function(x) points(seq(hpd) + runif(hpd, -0.02,0.02), lwd = 1.75 * cx,
+                                    cex = 1.25 * cx, coverage[,x], col = pcolor[x]))
   legend(0.4, 1, legend = plegend, fill = c(pcolor, "red"), cex = 1.25, bty = "n", border = "white")
   
   if(! is.null(panel_label)) make_panel_label(panel_label)
@@ -599,27 +592,36 @@ make_mtbd_nadeau_plots <- function(cnn, nad_rate_post, full_R0_q, a2_R0_q, nad_r
   nmar[2] = nmar[2]+0.25
   par("mar" = nmar) 
   layout(cbind(c(1,1),c(1,1),c(1,1),c(2,3),c(2,3)))
+  # plot posterior estimates from Nadeau et al. 2021
   vioplot(nadeau2021_R0_log, border = NA, col = rgb(1, 0.66, 0, 0.8), cex.axis =1.0, 
           cex.names = 1.0, names = locations, ylab = expression("R"[0]), 
-          ylim = c(0.25, 6), cex.lab = 1.5, rectCol="orange")
+          ylim = c(0.25, 6), cex.lab = 1.5, rectCol="orange", drawRect = F)
+  points(colMeans(nadeau2021_R0_log), pch = 16, cex = 2)
+  bayes_ci = apply(nadeau2021_R0_log, 2, function(x) quantile(x,c(0.025,0.975)))
+  arrows(x0 = seq(5), y0 = bayes_ci[1,], x1 = seq(5), y1 = bayes_ci[2,], angle = 0, lwd = 1)
   par("mar" = omar)
   
+  # plot CNN CPI
   points(seq(5)+0.15, cnn[1,1:5], col = rgb(0,0,1,1), pch = 1, lwd = 2, cex = 2)
   points(seq(5)+0.25, cnn[2,1:5], col = rgb(0,0,1,1), pch = 4, lwd = 2, cex = 2)
   arrows(x0 = seq(5)+0.15, y0 = full_R0_q[,1], y1 = full_R0_q[,2], length = 0, col = "blue")
   arrows(x0 = seq(5)+0.25, y0 = a2_R0_q[,1], y1 = a2_R0_q[,2], length = 0, col = "blue")
   
   #legend
-  points(c(0.5, 0.5, 0.5), c(4.2, 4, 3.8)+1.75, pch = c(15, 1, 4), col = c("orange", "blue", "blue"), 
+  points(c(0.5, 0.5, 0.5), c(4.2, 4, 3.8)+1.75, pch = c(15, 1, 4), col = c("orange", "blue", "blue"),
          cex = 2, lwd = c(1, 3, 3))
   text(c(0.5, 0.5), c(4.2, 4, 3.8)+1.75, pos = 4, offset = 0.75, cex = 1.0,
-       labels = c("Nadeau et al. 2021 posterior", "CNN Full Tree", "CNN A2 Clade"))
+       labels = c("Nadeau et al. 2021 posterior", "CNN Full tree", "CNN A2 clade"))
+  # points(c(0.5, 0.5), c(4.2, 4)+1.75, pch = c(15, 1, 4), col = c("orange", "blue"), 
+  #        cex = 2, lwd = c(1, 3, 3))
+  # text(c(0.5, 0.5), c(4.2, 4)+1.75, pos = 4, offset = 0.75, cex = 1.0,
+  #      labels = c("Nadeau et al. 2021 posterior", "CNN Full tree"))
   
   
   barplot(unlist(nadeau2021_cnn_pred[2,8:12]), names = locations, col = "blue",
-          main = "CNN", cex.names = 1.0, ylab = "Probability", cex.main = 0.9)
+          main = "qCNN A2 clade", cex.names = 1.0, ylab = "Probability", cex.main = 0.9)
   barplot(nadeau2021_root, names = locations, col = "orange", cex.main = 0.9,
-          main = "Nadeau et al. 2021", cex.names = 1.0,ylab = "Probability")
+          main = "Nadeau et al. 2021 A2 clade", cex.names = 1.0,ylab = "Probability")
   
   layout(1)
   if(!is.null(file_prefix)) dev.off()
