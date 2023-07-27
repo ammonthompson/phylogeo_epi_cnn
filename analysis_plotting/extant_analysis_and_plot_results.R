@@ -9,13 +9,6 @@ source("analysis_support_functions.R")
 # output parent directory
 figure_relative_dir = "figures/"
 
-xx_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/small_validation_CQR_coverage.tsv",
-                         header = T, row.names = 1)/100
-xx_labels = read.table("../neural_network_dev/uq_and_adequacy/output/small_validation_CQR_labels.tsv",
-                       header = T)
-make_coverage_figure(xx_coverage, xx_coverage, n=138, file_prefix = "figures/jpeg_files/xx_CPI_coverage",
-                     title = c("Conformalized q-CNN Coverage","Raw q-CNN Coverage"), mkfig=T, cx = 1, wh = c(1,1))
-
 #### UQ calibration ############
 caltest_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_coverage.tsv", 
                               header = T, row.names = 1)/100
@@ -26,7 +19,7 @@ caltest_ci = read.table("../neural_network_dev/uq_and_adequacy/output/validation
 caltest_labels = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_labels.tsv", header = T)
 
 make_coverage_figure(caltest_coverage, uncal_test_coverage, n=5000, file_prefix = "figures/jpeg_files/CPI_coverage",
-                     title = c("Conformalized q-CNN Coverage","Raw q-CNN Coverage"), mkfig=T, cx = 1, wh = c(1,1))
+                     title = c("Calibrated qCNN (CPI) Coverage","Uncalibrated qCNN Coverage"), mkfig=T, cx = 1, wh = c(1,1))
 
 nn=500
 plot(NULL, xlim = c(2,8), ylim = 1.25 * c(min(caltest_ci[1:nn,1] - caltest_labels[1:nn,1]), 

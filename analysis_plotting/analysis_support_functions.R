@@ -148,7 +148,7 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
   
   make_coverage_figure(phy_coverage, cnn_coverage, 
                        file_prefix = NULL,
-                       n = nrow(cnn_preds), title = c("Bayesian coverage", "qCNN coverage"),
+                       n = nrow(cnn_preds), title = c("Bayesian HPD coverage", "qCNN CPI coverage"),
                        mkfig = F, panel_label = "C")
  
    make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = "D")
@@ -619,7 +619,7 @@ make_mtbd_nadeau_plots <- function(cnn, nad_rate_post, full_R0_q, a2_R0_q, nad_r
   
   
   barplot(unlist(nadeau2021_cnn_pred[2,8:12]), names = locations, col = "blue",
-          main = "qCNN A2 clade", cex.names = 1.0, ylab = "Probability", cex.main = 0.9)
+          main = "CNN A2 clade", cex.names = 1.0, ylab = "Probability", cex.main = 0.9)
   barplot(nadeau2021_root, names = locations, col = "orange", cex.main = 0.9,
           main = "Nadeau et al. 2021 A2 clade", cex.names = 1.0,ylab = "Probability")
   
