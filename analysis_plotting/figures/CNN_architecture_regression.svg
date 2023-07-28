@@ -19,13 +19,28 @@
   <defs
      id="defs2">
     <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker9880"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path9878"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
        inkscape:isstock="true"
        style="overflow:visible;"
        id="marker9875"
        refX="0.0"
        refY="0.0"
        orient="auto"
-       inkscape:stockid="Arrow1Lend">
+       inkscape:stockid="Arrow1Lend"
+       inkscape:collect="always">
       <path
          transform="scale(0.8) rotate(180) translate(12.5,0)"
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
@@ -396,8 +411,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="971.29726"
-     inkscape:cy="533.87101"
+     inkscape:cx="1300.0645"
+     inkscape:cy="512.6527"
      inkscape:document-units="mm"
      inkscape:current-layer="g11731"
      showgrid="false"
@@ -420,7 +435,7 @@
        id="guide10434"
        inkscape:locked="false" />
     <sodipodi:guide
-       position="401.41072,114.99926"
+       position="397.29615,136.97563"
        orientation="1,0"
        id="guide10436"
        inkscape:locked="false" />
@@ -428,6 +443,11 @@
        position="380.19089,154.34816"
        orientation="1,0"
        id="guide10444"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="363.35291,139.5147"
+       orientation="1,0"
+       id="guide9570"
        inkscape:locked="false" />
   </sodipodi:namedview>
   <metadata
@@ -1172,19 +1192,17 @@
              style="stroke-width:0.26458332"> </tspan></text>
       </g>
       <g
-         id="g12080"
+         id="g10483"
          inkscape:export-xdpi="200"
          inkscape:export-ydpi="200">
         <g
-           inkscape:export-ydpi="200"
-           inkscape:export-xdpi="200"
-           id="g11902">
+           id="g10333">
           <rect
              style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:0.99285715;stroke:#0e0a04;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill"
              id="rect11759"
-             width="339.89722"
-             height="371.26242"
-             x="729.42896"
+             width="335.41647"
+             height="394.30624"
+             x="733.90973"
              y="-40.334442" />
           <rect
              y="-25.354511"
@@ -1243,21 +1261,21 @@
              id="rect8461-5-4"
              style="opacity:1;vector-effect:none;fill:#ffb380;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill" />
           <rect
-             y="255.44743"
+             y="285.91647"
              x="872.84406"
              height="18.520834"
              width="57.074402"
              id="rect8461-0-9-4-8-7"
              style="opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill" />
           <rect
-             y="217.71092"
+             y="248.17998"
              x="872.84406"
              height="18.520834"
              width="57.074402"
              id="rect8461-0-9-4-4-2"
              style="opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill" />
           <rect
-             y="303.24496"
+             y="320.27179"
              x="787.82922"
              height="18.359688"
              width="77.626648"
@@ -1411,30 +1429,30 @@
                sodipodi:role="line">concatenate</tspan></text>
           <text
              id="text9894-62-8-2"
-             y="267.10562"
+             y="297.57468"
              x="886.61029"
              style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458332"
-               y="267.10562"
+               y="297.57468"
                x="886.61029"
                id="tspan9892-99-1-6"
                sodipodi:role="line">nodes = 16</tspan></text>
           <text
              id="text9894-62-5-5"
-             y="227.85721"
+             y="258.32626"
              x="886.23236"
              style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458332"
-               y="227.85721"
+               y="258.32626"
                x="886.23236"
                id="tspan9892-99-0-94"
                sodipodi:role="line">nodes = 64</tspan></text>
           <path
              inkscape:connector-curvature="0"
              id="path10524-0"
-             d="m 825.8832,282.28526 v 10.20535"
+             d="m 825.8832,307.37746 v 10.20535"
              style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker10534-9)" />
           <rect
              y="213.57291"
@@ -1492,12 +1510,12 @@
                style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458332">Dense layer</tspan></text>
           <text
              id="text9894-62-5-2-8"
-             y="313.8432"
+             y="330.87003"
              x="797.30939"
              style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;stroke-width:0.26458332"
-               y="313.8432"
+               y="330.87003"
                x="797.30939"
                id="tspan9892-99-0-9-6"
                sodipodi:role="line">output: nodes = 3 or 7</tspan></text>
@@ -1607,7 +1625,7 @@
                id="tspan9892-98-4-0-8-6-8"
                sodipodi:role="line">stride = 6</tspan></text>
           <rect
-             y="236.23175"
+             y="266.70081"
              x="872.84406"
              height="18.520834"
              width="57.074402"
@@ -1615,12 +1633,12 @@
              style="opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill" />
           <text
              id="text9894-62-5-7-4"
-             y="246.37805"
+             y="276.84711"
              x="886.23236"
              style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458332"
-               y="246.37805"
+               y="276.84711"
                x="886.23236"
                id="tspan9892-99-0-0-1"
                sodipodi:role="line">nodes = 32</tspan></text>
@@ -1863,24 +1881,24 @@
              style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker11163-0)" />
           <text
              id="text11473-4"
-             y="312.56323"
+             y="329.59006"
              x="840.60034"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="stroke-width:0.26458332"
-               y="312.56323"
+               y="329.59006"
                x="840.60034"
                id="tspan11471-3"
                sodipodi:role="line"> </tspan></text>
           <rect
-             y="255.49327"
+             y="285.96231"
              x="801.45276"
              height="18.520834"
              width="57.074402"
              id="rect8461-0-9-4-8-7-0"
              style="opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill" />
           <rect
-             y="217.75676"
+             y="248.22581"
              x="801.45276"
              height="18.520834"
              width="57.074402"
@@ -1888,28 +1906,28 @@
              style="opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill" />
           <text
              id="text9894-62-8-2-0"
-             y="267.15146"
+             y="297.62051"
              x="815.21899"
              style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458332"
-               y="267.15146"
+               y="297.62051"
                x="815.21899"
                id="tspan9892-99-1-6-5"
                sodipodi:role="line">nodes = 16</tspan></text>
           <text
              id="text9894-62-5-5-9"
-             y="227.90305"
+             y="258.3721"
              x="814.84106"
              style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458332"
-               y="227.90305"
+               y="258.3721"
                x="814.84106"
                id="tspan9892-99-0-94-7"
                sodipodi:role="line">nodes = 64</tspan></text>
           <rect
-             y="236.27759"
+             y="266.74664"
              x="801.45276"
              height="18.520834"
              width="57.074402"
@@ -1917,17 +1935,17 @@
              style="opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill" />
           <text
              id="text9894-62-5-7-4-6"
-             y="246.42389"
+             y="276.89294"
              x="814.84106"
              style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458332"
-               y="246.42389"
+               y="276.89294"
                x="814.84106"
                id="tspan9892-99-0-0-1-3"
                sodipodi:role="line">nodes = 32</tspan></text>
           <rect
-             y="303.24496"
+             y="320.27179"
              x="865.45587"
              height="18.359688"
              width="77.626648"
@@ -1936,66 +1954,90 @@
           <path
              inkscape:connector-curvature="0"
              id="path10524-0-4"
-             d="m 910.46016,282.30078 v 10.20536"
+             d="m 910.46016,307.39298 v 10.20536"
              style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker10534-9-8)" />
           <text
              id="text9894-62-5-2-8-2"
-             y="313.8432"
+             y="330.87003"
              x="874.93604"
              style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;stroke-width:0.26458332"
-               y="313.8432"
+               y="330.87003"
                x="874.93604"
                id="tspan9892-99-0-9-6-8"
                sodipodi:role="line">output: nodes = 3 or 7</tspan></text>
           <text
              id="text11473-4-7"
-             y="312.56323"
+             y="329.59006"
              x="918.22699"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
              xml:space="preserve"><tspan
                style="stroke-width:0.26458332"
-               y="312.56323"
+               y="329.59006"
                x="918.22699"
                id="tspan11471-3-2"
                sodipodi:role="line"> </tspan></text>
           <path
              style="fill:none;stroke:#000000;stroke-width:0.25402632;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker9875)"
-             d="M 865.68197,192.0464 C 830.0861,215.80912 830.0861,215.80912 830.0861,215.80912"
+             d="M 865.68197,223.41165 C 830.0861,247.17437 830.0861,247.17437 830.0861,247.17437"
              id="path9865"
              inkscape:connector-curvature="0" />
           <path
              style="fill:none;stroke:#000000;stroke-width:0.22748737;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker9875-0)"
-             d="m 865.68197,192.0464 c 35.93597,23.76272 35.93597,23.76272 35.93597,23.76272"
+             d="m 865.68197,223.41165 c 35.93597,23.76272 35.93597,23.76272 35.93597,23.76272"
              id="path9865-4"
              inkscape:connector-curvature="0" />
+          <flowRoot
+             xml:space="preserve"
+             id="flowRoot11904"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+             transform="matrix(0.4480742,0,0,0.4480742,227.25685,-91.576279)"><flowRegion
+               id="flowRegion11906"><rect
+                 id="rect11908"
+                 width="136.37059"
+                 height="18.687822"
+                 x="1285.4191"
+                 y="961.40033" /></flowRegion><flowPara
+               id="flowPara11910"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start">lower quantile</flowPara></flowRoot>          <flowRoot
+             xml:space="preserve"
+             id="flowRoot11904-5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+             transform="matrix(0.4480742,0,0,0.4480742,304.61438,-91.464979)"><flowRegion
+               id="flowRegion11906-6"><rect
+                 id="rect11908-1"
+                 width="136.37059"
+                 height="18.687822"
+                 x="1285.4191"
+                 y="961.40033" /></flowRegion><flowPara
+               id="flowPara11910-7"
+               style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start">upper quantile</flowPara></flowRoot>          <rect
+             y="204.26738"
+             x="837.37109"
+             height="18.520834"
+             width="57.074402"
+             id="rect8461-0-9-4-4-2-7"
+             style="opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;stroke:#000000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke markers fill" />
+          <text
+             id="text9894-62-5-5-1"
+             y="215.30981"
+             x="850.7594"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+             xml:space="preserve"><tspan
+               style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:5.64444447px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458332"
+               y="215.30981"
+               x="850.7594"
+               id="tspan9892-99-0-94-4"
+               sodipodi:role="line">nodes = 256</tspan></text>
+          <path
+             style="fill:none;stroke:#000000;stroke-width:0.25402632;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker9880);stroke-miterlimit:4;stroke-dasharray:none"
+             d="m 865.68196,191.82008 10e-6,5.88411 0,4.75253"
+             id="path9944"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccc" />
         </g>
-        <flowRoot
-           transform="matrix(0.4480742,0,0,0.4480742,227.25685,-108.60311)"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-           id="flowRoot11904"
-           xml:space="preserve"><flowRegion
-             id="flowRegion11906"><rect
-               y="961.40033"
-               x="1285.4191"
-               height="18.687822"
-               width="136.37059"
-               id="rect11908" /></flowRegion><flowPara
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-             id="flowPara11910">lower quantile</flowPara></flowRoot>        <flowRoot
-           transform="matrix(0.4480742,0,0,0.4480742,304.61438,-108.49181)"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-           id="flowRoot11904-5"
-           xml:space="preserve"><flowRegion
-             id="flowRegion11906-6"><rect
-               y="961.40033"
-               x="1285.4191"
-               height="18.687822"
-               width="136.37059"
-               id="rect11908-1" /></flowRegion><flowPara
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start"
-             id="flowPara11910-7">upper quantile</flowPara></flowRoot>      </g>
+      </g>
     </g>
   </g>
 </svg>

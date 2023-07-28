@@ -1,0 +1,2 @@
+uq_train_XXX_rates.ipynb train the quantile CNNs
+cqr_uq_XXX.ipynb calibrate the quantile CNNs outputs and then predict CPIs for all the manuscript experiment datasets
