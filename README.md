@@ -30,6 +30,8 @@ All experiments were run on the following platform with the corresponding softwa
 - If simulating genome sequence evolution: Assumes seq-gen v1.3.2 is in your `$PATH`
 
 ### Simulation
+Simulation settings are passed into the program with a control file like the one in:
+./control_files/testing_controlfile.txt
 
 Basic command to simulate training and test trees:
 
