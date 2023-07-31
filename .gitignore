@@ -17,7 +17,8 @@ MASTER/output_sims/**
 **/*.printscreen
 **/tree_encoding/cblv_files/
 **/neural_network_dev/data_files/
-
+**/__pycache__
+**/.ipynb_checkpoints
 **/*.lib.bib
 **/*.tar
 **/*.tar.gz
