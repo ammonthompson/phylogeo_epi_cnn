@@ -2,6 +2,9 @@
 
 All experiments were run on the following platform with the corresponding software versions:
 
+- Simulations: On an AWS EC2 instance. Ubuntu 18.04.6 LTS (GNU/Linux 5.4.0-1092-aws x86_64v)
+
+- Simulation experiment results analyses: 
 - Platform: `x86_64-pc-linux-gnu` (64-bit) on Window subsystem for Linux v2
 - Running under: Ubuntu 20.04.3 LTS
 
