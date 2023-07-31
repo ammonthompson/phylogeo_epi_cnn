@@ -6,8 +6,12 @@ library(expm)
 library(BEST)
 source("analysis_support_functions.R")
 
+# figure settings
+fig_scale = 10
+file_type = "pdf"
+
 # output parent directory
-figure_relative_dir = "figures/"
+figure_relative_dir = "figures/pdf_files"
 
 #### UQ calibration ############
 caltest_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_coverage.tsv", 
@@ -18,27 +22,8 @@ uncal_test_coverage = read.table("../neural_network_dev/uq_and_adequacy/output/u
 caltest_ci = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_ci.tsv", header = T)
 caltest_labels = read.table("../neural_network_dev/uq_and_adequacy/output/validation_CQR_labels.tsv", header = T)
 
-make_coverage_figure(caltest_coverage, uncal_test_coverage, n=5000, file_prefix = "figures/jpeg_files/CPI_coverage",
+make_coverage_figure(caltest_coverage, uncal_test_coverage, file_prefix = paste0(figure_relative_dir, "/Figure_3_CPI_coverage"), n=5000,
                      title = c("Calibrated qCNN (CPI) Coverage","Uncalibrated qCNN Coverage"), mkfig=T, cx = 1, wh = c(1,1))
-
-nn=500
-plot(NULL, xlim = c(2,8), ylim = 1.25 * c(min(caltest_ci[1:nn,1] - caltest_labels[1:nn,1]), 
-                                       max(caltest_ci[1:nn,2] - caltest_labels[1:nn,1])))
-arrows(caltest_labels[1:nn,1], caltest_ci[1:nn,1] - caltest_labels[1:nn,1], caltest_labels[1:nn,1], 
-       caltest_ci[1:nn,2] - caltest_labels[1:nn,1], angle = 0)
-abline(h=0,col="red")
-
-plot(NULL, xlim = c(0,0.005), ylim = 1.25 * c(min(caltest_ci[1:nn,3] - caltest_labels[1:nn,2]), 
-                                       max(caltest_ci[1:nn,4] - caltest_labels[1:nn,2])))
-arrows(caltest_labels[1:nn,2], caltest_ci[1:nn,3] - caltest_labels[1:nn,2], caltest_labels[1:nn,2], 
-       caltest_ci[1:nn,4] - caltest_labels[1:nn,2], angle = 0)
-abline(h=0,col="red")
-
-plot(NULL, xlim = c(0,0.005), ylim = 1.25 * c(min(caltest_ci[1:nn,5] - caltest_labels[1:nn,3]), 
-                                       max(caltest_ci[1:nn,6] - caltest_labels[1:nn,3])))
-arrows(caltest_labels[1:nn,3], caltest_ci[1:nn,5] - caltest_labels[1:nn,3], caltest_labels[1:nn,3], 
-       caltest_ci[1:nn,6] - caltest_labels[1:nn,3], angle = 0)
-abline(h=0,col="red")
 
 
 #### True specified model ########
@@ -54,14 +39,14 @@ extant_phylocomp_ci = read.table("../phylo_analysis/hpd_estimates/extant_phyloco
 cnn_phylocomp_ci = read.table("../neural_network_dev/uq_and_adequacy/output/phylocomp_CQR_ci.tsv", header = T)
 
 make_ci_width_figure(cnn_phylocomp_ci, extant_phylocomp_ci, extant_labels[,1:3], 
-                     file_prefix = paste0(figure_relative_dir, "jpeg_files/phylocomp_ci"))
+                     file_prefix = paste0(figure_relative_dir, "/Figure_S4_phylocomp_ci"))
 
 make_experiment_figure(extant_cnn, extant_phylo, extant_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_figure"),
+                       file_prefix = paste0(figure_relative_dir, "/Figure_2_extant_figure"),
                        phy_coverage = extant_phylocomp_coverage, cnn_coverage = cnn_phylocomp_coverage)
 
 make_runtime_scatter_plots(extant_phylocomp_runtimes, 
-                           file_prefix = paste0(figure_relative_dir, "jpeg_files/phylocomp_runtimes"))
+                           file_prefix = paste0(figure_relative_dir, "/Figure_4_phylocomp_runtimes"))
 
 
 ########## misspect extant R0 ###############
@@ -76,10 +61,10 @@ extant_miss_R0_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_R
 cnn_miss_R0_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missR0_CQR_ci.tsv", header = T)
 
 make_ci_width_figure(cnn_miss_R0_ci, extant_miss_R0_ci, extant_miss_R0_labels[,1:3], 
-                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missR0_ci"))
+                     file_prefix = paste0(figure_relative_dir, "/Figure_S6_missR0_ci"))
 
 make_experiment_figure(extant_miss_R0_cnn_preds, extant_miss_R0_phylo_preds, extant_miss_R0_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_R0_figure"),
+                       file_prefix = paste0(figure_relative_dir, "/Figure_5_extant_misspec_R0_figure"),
                        phy_coverage = extant_miss_R0_phylo_coverage, cnn_coverage = cnn_miss_R0_coverage)
 
 
@@ -95,10 +80,10 @@ extant_miss_delta_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspe
 cnn_miss_delta_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missDelta_CQR_ci.tsv", header = T)
 
 make_ci_width_figure(cnn_miss_delta_ci, extant_miss_delta_ci, extant_miss_delta_labels[,1:3], 
-                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missDelta_ci"))
+                     file_prefix = paste0(figure_relative_dir, "/Figure_S8_missDelta_ci"))
 
 make_experiment_figure(extant_miss_delta_cnn_preds, extant_miss_delta_phylo_preds, extant_miss_delta_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_delta_figure"),
+                       file_prefix = paste0(figure_relative_dir, "/Figure_6_extant_misspec_delta_figure"),
                        phy_coverage = extant_miss_delta_phylo_coverage, cnn_coverage = cnn_miss_delta_coverage)
 
 ########## misspect extant m ###############
@@ -113,10 +98,10 @@ extant_miss_m_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec_m_
 cnn_miss_m_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missM_CQR_ci.tsv", header = T)
 
 make_ci_width_figure(cnn_miss_m_ci, extant_miss_m_ci, extant_miss_m_labels[,1:3], 
-                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missM_ci"))
+                     file_prefix = paste0(figure_relative_dir, "/Figure_S10_missM_ci"))
 
 make_experiment_figure(extant_miss_m_cnn_preds, extant_miss_m_phylo_preds, extant_miss_m_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_m_figure"),
+                       file_prefix = paste0(figure_relative_dir, "/Figure_7_extant_misspec_m_figure"),
                        phy_coverage = extant_miss_m_phylo_coverage, cnn_coverage = cnn_miss_m_coverage)
 
 ########## extant misspec numloc ###############
@@ -131,10 +116,10 @@ extant_miss_numloc_ci = read.table("../phylo_analysis/hpd_estimates/extant_missp
 cnn_miss_numloc_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missNumLoc_CQR_ci.tsv", header = T)
 
 make_ci_width_figure(cnn_miss_numloc_ci, extant_miss_numloc_ci, extant_miss_numloc_labels[,1:3], 
-                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missNumloc_ci"))
+                     file_prefix = paste0(figure_relative_dir, "/Figure_S12_missNumloc_ci"))
 
 make_experiment_figure(extant_miss_numloc_cnn_preds, extant_miss_numloc_phylo_preds, extant_miss_numloc_labels, 
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_numloc_figure"),
+                       file_prefix = paste0(figure_relative_dir, "/Figure_8_extant_misspec_numloc_figure"),
                        phy_coverage = extant_miss_numloc_phylo_coverage, cnn_coverage = cnn_miss_numloc_coverage)
 
 ######### misspec tree ###################
@@ -150,10 +135,10 @@ extant_miss_tree_ci = read.table("../phylo_analysis/hpd_estimates/extant_misspec
 cnn_miss_tree_ci = read.table("../neural_network_dev/uq_and_adequacy/output/missTree_CQR_ci.tsv", header = T)
 
 make_ci_width_figure(cnn_miss_tree_ci, extant_miss_tree_ci, extant_miss_tree_labels[,1:3], 
-                     file_prefix = paste0(figure_relative_dir, "jpeg_files/missTree_ci"))
+                     file_prefix = paste0(figure_relative_dir, "/Figure_S14_missTree_ci"))
 
 make_experiment_figure(extant_miss_tree_cnn, extant_miss_tree_phylo, extant_miss_tree_labels,
-                       file_prefix = paste0(figure_relative_dir, "jpeg_files/extant_misspec_tree_figure"),
+                       file_prefix = paste0(figure_relative_dir, "/Figure_9_extant_misspec_tree_figure"),
                        phy_coverage = extant_miss_tree_phylo_coverage, cnn_coverage = cnn_miss_tree_coverage)
 
 quantile(extant_miss_tree_jaccard[,1], p = c(0.025, 0.5, 0.975))
@@ -172,7 +157,7 @@ make_mtbd_nadeau_plots(nadeau2021_cnn_pred, nadeau2021_R0_log,
                        nadeau2021_cnn_ci[,1:2], nadeau2021_cnn_ci[,3:4],
                        nadeau2021_root, 
                        file_prefix =paste0(figure_relative_dir, 
-                                           "jpeg_files/nadeau2021_mtbd_compare"))
+                                           "/Figure_10_nadeau2021_mtbd_compare"))
 
   # compare delta and m estimates
 gamma_cnn = 0.05
@@ -190,6 +175,8 @@ nad_m_proportion_range = c(0.1,10)/gamma_nadeau
 cat("sample prop Nadaeau: ", nad_sample_proportion_range, "   CNN: ", c(min(sample_prop_cnn_ci), max(sample_prop_cnn_ci)), "\n",
     "migration prop Nadaeau: ", nad_m_proportion_range, "   CNN: ", c(min(m_prop_cnn_ci), max(m_prop_cnn_ci)), "\n")
 
+
+
 ##############################################
 ################ BEST analyses ###############
 ##############################################
@@ -198,39 +185,39 @@ cat("sample prop Nadaeau: ", nad_sample_proportion_range, "   CNN: ", c(min(samp
 extant_cnn_ape = get_ape(extant_cnn[,1:3], extant_labels[,1:3])
 extant_phylo_ape = get_ape(extant_phylo[,1:3], extant_labels[,1:3])
 extant_best = make_phylocomp_BESTplots(extant_cnn_ape, extant_phylo_ape,
-                                       file_prefix =  paste0(figure_relative_dir,"jpeg_files/BEST_output/extant"))
+                                       file_prefix =  paste0(figure_relative_dir,"/BEST_output/extant"))
 
 extant_R0_cnn_ape = get_ape(extant_miss_R0_cnn_preds[,1:3], extant_miss_R0_labels[,1:3])
 extant_R0_phylo_ape = get_ape(extant_miss_R0_phylo_preds[,1:3], extant_miss_R0_labels[,1:3])
 extant_R0_best =  make_misspec_BESTplots(extant_R0_cnn_ape, extant_R0_phylo_ape, 
                                          extant_cnn_ape, extant_phylo_ape,
-                                         file_prefix = paste0(figure_relative_dir,"jpeg_files/BEST_output/extant_misspec_R0"))
+                                         file_prefix = paste0(figure_relative_dir,"/BEST_output/extant_misspec_R0"))
 
 extant_delta_cnn_ape = get_ape(extant_miss_delta_cnn_preds[,1:3], extant_miss_delta_labels[,1:3])
 extant_delta_phylo_ape = get_ape(extant_miss_delta_phylo_preds[,1:3], extant_miss_delta_labels[,1:3])
 extant_delta_best =  make_misspec_BESTplots(extant_delta_cnn_ape, extant_delta_phylo_ape, 
                                             extant_cnn_ape, extant_phylo_ape,
-                                            file_prefix = paste0(figure_relative_dir,"jpeg_files/BEST_output/extant_misspec_delta"))
+                                            file_prefix = paste0(figure_relative_dir,"/BEST_output/extant_misspec_delta"))
 
 extant_m_cnn_ape = get_ape(extant_miss_m_cnn_preds[,1:3], extant_miss_m_labels[,1:3])
 extant_m_phylo_ape = get_ape(extant_miss_m_phylo_preds[,1:3], extant_miss_m_labels[,1:3])
 extant_m_best =  make_misspec_BESTplots(extant_m_cnn_ape, extant_m_phylo_ape, 
                                         extant_cnn_ape, extant_phylo_ape,
-                                        file_prefix = paste0(figure_relative_dir,"jpeg_files/BEST_output/extant_misspec_m"))
+                                        file_prefix = paste0(figure_relative_dir,"/BEST_output/extant_misspec_m"))
 
 
 extant_numloc_cnn_ape = get_ape(extant_miss_numloc_cnn_preds[,1:3], extant_miss_numloc_labels[,1:3])
 extant_numloc_phylo_ape = get_ape(extant_miss_numloc_phylo_preds[,1:3], extant_miss_numloc_labels[,1:3])
 extant_numloc_best = make_misspec_BESTplots(extant_numloc_cnn_ape, extant_numloc_phylo_ape,
                                             extant_cnn_ape, extant_phylo_ape,
-                                            file_prefix = paste0(figure_relative_dir,"jpeg_files/BEST_output/extant_misspec_numloc"))
+                                            file_prefix = paste0(figure_relative_dir,"/BEST_output/extant_misspec_numloc"))
 
 
 extant_tree_cnn_ape = get_ape(extant_miss_tree_cnn[,1:3], extant_miss_tree_labels[,1:3])
 extant_tree_phylo_ape = get_ape(extant_miss_tree_phylo[,1:3], extant_miss_tree_labels[,1:3])
 extant_tree_best = make_misspec_BESTplots(extant_tree_cnn_ape, extant_tree_phylo_ape,
                                             extant_cnn_ape, extant_phylo_ape,
-                                            file_prefix = paste0(figure_relative_dir,"jpeg_files/BEST_output/extant_misspec_tree"))
+                                            file_prefix = paste0(figure_relative_dir,"/BEST_output/extant_misspec_tree"))
 
 
 

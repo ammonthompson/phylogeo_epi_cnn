@@ -8,6 +8,9 @@ All experiments were run on the following platform with the corresponding softwa
 - Platform: `x86_64-pc-linux-gnu` (64-bit) on Window subsystem for Linux v2
 - Running under: Ubuntu 20.04.3 LTS
 
+### Training and other large data files
+- Available in the Dryad repo under doi: XXXXXX
+
 ### Software and Libraries
 
 - Beast 2 v2.6.3 with the package MASTER v6.1.2 installed for simulation.
