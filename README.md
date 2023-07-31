@@ -40,6 +40,5 @@ randomParams_Simulation.sh path/to/control_file.txt num_locations sim_num_from,s
 ### Analysis and Plotting
 The final analysis script that generates results and figures for the manuscript is:
 
-```shell
 analysis_plotting/extant_analysis_and_plot_results.R
-```
+
