@@ -179,7 +179,7 @@ make_ci_width_figure = function(cnn_ci, phylo_ci, labels, file_prefix = NULL, fi
     if(!is.null(file_prefix)) pdf(paste0(file_prefix, ".pdf"),width = 1*fig_scale, height = 0.65*fig_scale)
   }else{
     if(!is.null(file_prefix)) jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
-    res = 400, width = 1*fig_scale, height = 1*fig_scale)
+    res = 400, width = 1*fig_scale, height = 0.75*fig_scale)
   }
   
 
@@ -403,9 +403,12 @@ make_runtime_scatter_plots <- function(phylo_runtime_numtips_treesize,
                                        cnn_training_cpu_hours = 2,
                                        file_prefix = NULL, file_type = "pdf"){
  #   cnn_time = hr. 0.44 x 10^-3 s, 0.44 ms per tree on average
-  # jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
-  #      res = 400, width = 0.75*fig_scale, height = 0.5*fig_scale)
-  pdf(paste0(file_prefix, ".pdf"), width = 0.75*fig_scale, height = 0.5*fig_scale)
+  if(file_type == "pdf"){
+    pdf(paste0(file_prefix, ".pdf"), width = 0.75*fig_scale, height = 0.5*fig_scale)
+  }else{
+    jpeg(paste0(file_prefix, ".jpg"), units = "in", quality = 100,
+         res = 400, width = 0.75*fig_scale, height = 0.5*fig_scale)
+  }
   
   layout(matrix(seq(2), nrow = 1))
   old_mar = par("mar")
