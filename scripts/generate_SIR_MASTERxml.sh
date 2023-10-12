@@ -1,5 +1,33 @@
 #!/bin/bash
 
+# This script processes a control file to extract parameters
+# and values that are subsequently used to generate an XML 
+# output for simulating SIR (Susceptible-Infectious-Recovered) 
+# models using the BEAST framework.
+#
+# The control file defines various epidemiological parameters 
+# such as initial population sizes, infection rates, migration 
+# rates, sampling rates, recovery rates, and more.
+#
+# Moreover, it facilitates the customization of these rates 
+# across multiple locations (geographical sites) for more 
+# complex modeling. Furthermore, migration between locations 
+# can be modeled based on geographical distance or at an equal 
+# rate.
+#
+# Parameters:
+# $1 - Control file containing parameters and values.
+# $2 - Output XML file.
+#
+# Dependencies:
+# This script relies on other scripts, especially those within
+# the `generate_xml_modules` directory to process specific
+# components such as migration.
+#
+# Usage:
+# ./generate_SIR_MASTERxml.sh <control_file> <output_file.xml>
+
+
 control_file=$1
 export out_file=$2
 

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# this script is derived from the encoding script in phylodeep 
+# (Voznica et al. 2022: DOI: 10.1038/s41467-022-31511-0)
+# https://www.nature.com/articles/s41467-022-31511-0
+
+
 import sys
 import numpy as np
 import pandas as pd

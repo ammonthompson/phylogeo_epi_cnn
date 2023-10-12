@@ -1,5 +1,29 @@
 #!/bin/bash
 # this is a private script that is used by the generate_X_xml.sh scripts
+# This private script is an auxiliary tool designed to compute and manage 
+# migration reactions based on an epidemiological model specified by the user.
+# Specifically, it deals with the SIR (Susceptible, Infected, Recovered) model.
+# When given migration parameters, it computes migration rates between 
+# different locations, accommodating various aspects such as distance between 
+# the locations and potential barriers to migration.
+#
+# The main tasks executed by the script include:
+# - Calculating pairwise distances between locations using their X and Y positions.
+# - Deriving migration rates between locations using distance and other parameters.
+# - Outputting reactions for migration events in the model.
+# - Supporting a 'superspreader' mode, accounting for high-infectious individuals.
+#
+# Input:
+# The script takes in an epidemiological model ('SIR' in this context) and 
+# other parameters specified in the parent script.
+#
+# Note:
+# This script is not meant to be executed independently. It is called and used 
+# by the 'generate_X_xml.sh' script series.
+#
+# Dependencies:
+# - BC: An arbitrary precision calculator language.
+
 
 EPI_MODEL=$1
 

@@ -1,5 +1,9 @@
 from ete3 import Tree
 
+# this script is derived from the tree_utilities script in phylodeep
+# (Voznica et al. 2022: DOI: 10.1038/s41467-022-31511-0)
+# https://www.nature.com/articles/s41467-022-31511-0
+
 
 def read_tree(newick_tree):
     """ Tries all nwk formats and returns an ete3 Tree

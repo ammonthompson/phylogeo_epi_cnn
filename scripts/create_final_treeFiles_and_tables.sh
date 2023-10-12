@@ -1,5 +1,34 @@
 #!/bin/bash
 
+# This script processes input tree files in Newick and Nexus formats,
+# splitting trees into separate files, extracting metadata, and 
+# performing optional operations such as truncation and subsampling.
+# The output includes individual tree files, metadata tables, and 
+# location-specific Nexus tree files.
+#
+# Parameters:
+# $1 - Input Nexus trees file.
+# $2 - Input Newick trees file.
+# $3 - Control file (for extracting number of locations).
+# $4 - Output file prefix.
+# $5 - Truncation time (0 for no truncation).
+# $6 (optional) - Number of trees to subsample, or "all" to use all trees.
+#
+# Dependencies:
+# - Assumes specific structures in the input tree files.
+# - Calls external scripts: 
+#	1. truncate_to_extant_time.r, 
+#   	2. get_subsample_metadata_newick.sh, 
+#	3. and make_location_nexus_file.sh.
+#   Ensure these scripts are located in the same directory.
+#
+# Usage:
+# ./create_final_treeFiles_and_tables.sh <nexus_trees_file> <newick_trees_file> 
+#    <control_file> <out_file_prefix> <trunc_time> [num_subsample]
+
+
+
+
 nexus_trees_file=$1
 shift
 newick_trees_file=$1

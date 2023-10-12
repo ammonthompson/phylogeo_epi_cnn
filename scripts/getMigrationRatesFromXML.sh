@@ -1,5 +1,26 @@
 #!/bin/bash
-#output one row with column names, ,-delimited and to stdout
+
+# This script extracts migration rates between different
+# locations from a given XML file. The output is a comma-delimited
+# row with column names representing each migration rate 
+# parameter, followed by a row with the extracted rates.
+#
+# Parameters:
+# $1 - Input XML file containing migration rates.
+#
+# Output:
+# Outputs one comma-delimited row to stdout:
+# 	Migration rate parameter names and 
+# 	Corresponding migration rates extracted from the XML.
+#
+# Dependencies:
+# Assumes XML structure where migration rates are associated 
+# with patterns like 'I[n] -> I[m]'  
+#
+# Usage:
+# ./getMigrationRatesFromXML.sh <input_xml_file>
+#
+
 
 xmlfile=$1
 num_locs=$(grep PopulationType $xmlfile |grep S |egrep -o [0-9]+)

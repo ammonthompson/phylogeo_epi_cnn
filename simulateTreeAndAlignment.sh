@@ -2,6 +2,49 @@
 # keep with the generateMASTERxml.sh and collapse_singletons.r scrips
 # beast2 and seq-gen should be in PATH
 
+
+# This script automates processes related to the MASTER simulation framework for
+# epidemiological models. Its primary functionalities include:
+#
+# 1. Parsing input flags and arguments for user-defined configurations.
+# 2. Determining the simulation model (e.g., SIR, SEIR, VOC_SIR).
+# 3. Generating the appropriate MASTER XML file based on the chosen model.
+# 4. Logging pairwise migration rates from the XML to a CSV file.
+# 5. Running the MASTER simulations using the Beast2 platform.
+# 6. Creating metadata files for each simulated tree.
+# 7. Optionally simulating sequence alignments using Seq-Gen.
+# 8. Optionally plotting population dynamics using an R script.
+# 
+# Input Flags and Arguments:
+# -c|--control_file    : Path to the control file.
+# -o|--out_prefix      : Prefix for output files.
+# -m|--model           : Simulation model (e.g., SIR, SEIR, VOC_SIR).
+# -p|--plot            : (Optional) Flag to indicate plotting.
+# -a|--alignment       : (Optional) Flag for alignment generation.
+# -s|--subsample       : (Optional) Number of tips to subsample.
+# -t|--trunc_time      : (Optional) Time to truncate simulations.
+# -h|--help            : Displays a help message.
+#
+# Dependencies:
+# 1. Beast2 and Seq-Gen should be available in the system's PATH.
+# 2. Relies on auxiliary scripts located in the 'scripts' directory, including:
+#    - generate_SIR_MASTERxml.sh
+#    - generate_SEIR_MASTERxml.sh
+#    - generate_voc_SIR_MASTERxml.sh
+#    - getMigrationRatesFromXML.sh
+#    - create_final_treeFiles_and_tables.sh
+#    - seqgen.sh
+#    - makePopulationPlots.r
+# 
+# Usage:
+# ./simulateTreeAndAlignment.sh [OPTIONS]
+#
+# Notes:
+# Ensure that all dependencies are correctly set up and that input files 
+# and paths are precisely specified for successful execution.
+
+
+
 #############
 # Defaults #
 ############

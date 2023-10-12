@@ -1,4 +1,38 @@
 #!/usr/bin/env Rscript
+
+# This R script generates visualizations of population data across various locations
+# based on inputs from control files and JSON data. Three main plots are generated:
+#
+# 1. A population relative distance plot based on geographical X and Y positions.
+# 2. Number of infected individuals through time, across all locations.
+# 3. Number of susceptible individuals through time, across all locations.
+#
+# Inputs:
+# - A control file, which provides metadata including number of locations and
+#   optional geographical positions.
+# - A JSON file, which contains time-series data on infected and susceptible
+#   individuals for each simulation and location.
+# - An output prefix to name the generated PDF plots.
+#
+# Outputs:
+# - A PDF plot showing the relative distances of the locations (if geographical
+#   data is provided).
+# - A PDF plot showcasing the number of infected individuals through time.
+# - A PDF plot showcasing the number of susceptible individuals through time.
+#
+# Dependencies:
+# - Requires the rjson package to read JSON input data.
+#
+# Usage:
+# ./makePopulationPlots.r <control_file> <json_file> <output_prefix>
+#
+# Notes:
+# - Ensure the control file and JSON file are formatted correctly, matching the
+#   expected structure used in this script.
+# - The generated plots are color-coded based on location. Adjust `mycolors` if
+#   a different color palette is desired.
+
+
 library(rjson)
 args <- commandArgs(trailingOnly=T)
 defaultW <- getOption("warn")

@@ -1,4 +1,36 @@
 #!/usr/bin/env Rscript
+
+# This script is called from simulateTreeAndAlignment.sh
+# This script processes a JSON file representing dynamics from a MASTER simulation of 
+# SIR (Susceptible-Infectious-Recovered) model. It calculates and 
+# prints a variety of statistics for each location in each simulation, including:
+# 
+# - Importations per capita for each location
+# - Infections per susceptible individual for each location
+# - Timing of the first infection event for each location
+# - The proportion of tips (endpoints) subsampled from the simulation
+# - The number of infections (I) at user-specified time points across all locations
+# 
+# Input Arguments:
+# 1. Path to the JSON file containing SIR simulation dynamics
+# 2. Number of tips (endpoints) sampled per simulation
+# 3. (Optional) Time points of interest for which the script should count infections
+# 
+# Outputs:
+# The script prints statistics to the console in a tab-separated format.
+#
+# Dependencies:
+# This script requires the 'rjson' library for reading JSON formatted data.
+#
+# Usage:
+# .get_population_stats.r <path_to_JSON_file> <num_tips_sampled_per_sim> [<time_points>]
+#
+# Notes:
+# This is used internally in the simulateTreeAndAlignment.sh script
+# It is crucial that the JSON file and input arguments match the expected format 
+# and structure for the script to work correctly.
+
+
 library(rjson)
 
 args <- commandArgs(trailingOnly=T)
