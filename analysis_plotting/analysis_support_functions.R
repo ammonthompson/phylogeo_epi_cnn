@@ -1,6 +1,5 @@
 library(vioplot)
 library(expm)
-library(BEST)
 library(matrixStats)
 
 
@@ -127,12 +126,12 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
 
 
 
-  grid = matrix(c(1,1,2,2,3,3,10,10,
-                  1,1,2,2,3,3,10,10,
-                  4,4,5,5,6,6,11,11,
-                  4,4,5,5,6,6,11,11,
-                  7,7,8,8,9,9,12,12,
-                  7,7,8,8,9,9,12,12,
+  grid = matrix(c(1, 1, 2, 2, 3, 3, 10,10,
+                  1, 1, 2, 2, 3, 3, 10,10,
+                  4, 4, 5, 5, 6, 6, 11,11,
+                  4, 4, 5, 5, 6, 6, 11,11,
+                  7, 7, 8, 8, 9, 9, 12,12,
+                  7, 7, 8, 8, 9, 9, 12,12,
                   13,13,13,14,14,14,15,15,
                   13,13,13,14,14,14,15,15), ncol = 8, nrow = 8, byrow=F)
 
@@ -140,18 +139,18 @@ make_experiment_figure <- function(cnn_preds, phylo_preds, labels, file_prefix =
 
 
 
-  make_scatter_plot(cnn_rates, phylo_rates, rates_labels, set_layout = FALSE, panel_label = "A",
+  make_scatter_plot(cnn_rates, phylo_rates, rates_labels, set_layout = FALSE, panel_label = "a)",
                     phylo_coverage = phy_coverage, cnn_coverage = cnn_coverage)
 
-  make_error_difference_boxplot(cnn_rates, phylo_rates, rates_labels, panel_label = "B")
+  make_error_difference_boxplot(cnn_rates, phylo_rates, rates_labels, panel_label = "b)")
 
 
   make_coverage_figure(phy_coverage, cnn_coverage,
                        file_prefix = NULL,
                        n = nrow(cnn_preds), title = c("Bayesian HPD coverage", "qCNN CPI coverage"),
-                       mkfig = F, panel_label = "C")
+                       mkfig = F, panel_label = "c)")
 
-   make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = "D")
+   make_root_location_plots(cnn_root, phylo_root, root_labels, panel_label = "d)")
 
   if(! is.null(file_prefix)) dev.off()
 
@@ -390,7 +389,7 @@ make_root_location_plots <- function(cnn_pred, phylo_pred, labels,
 
   legend(-0.075, 0.8 * bothmax, legend = paste0("Avg. CNN acc. = ", round(mean(cnn_acc), digits = 2)),
          fill = "blue", border = "white", bty = 'n', cex = 1.2, yjust = 0)
-  legend(-0.075, -0.8 * bothmax, legend = paste0("Avg. Post. mean acc. = ", round(mean(phylo_acc), digits = 2)),
+  legend(-0.075, -0.8 * bothmax, legend = paste0("Avg. Posterior acc. = ", round(mean(phylo_acc), digits = 2)),
          fill = "red", border = "white", bty = 'n', cex = 1.2, yjust = 1)
   par("mar" = old_mar)
 
@@ -639,9 +638,9 @@ make_mtbd_nadeau_plots <- function(cnn, nad_rate_post, full_R0_q, a2_R0_q, nad_r
        labels = c("Nadeau et al. 2021 posterior", "CNN Full tree", "CNN A2 clade"))
 
   # root location A2 clade histograms
-  barplot(unlist(nadeau2021_cnn_pred[2,8:12]), names = locations, col = "blue",
+  barplot(unlist(cnn[2,8:12]), names = locations, col = "blue",
           main = "CNN A2 clade", cex.names = 1.0, ylab = "Probability", cex.main = 0.9)
-  barplot(nadeau2021_root, names = locations, col = "orange", cex.main = 0.9,
+  barplot(nad_root_post, names = locations, col = "orange", cex.main = 0.9,
           main = "Nadeau et al. 2021 A2 clade", cex.names = 1.0,ylab = "Probability")
 
   layout(1)
@@ -674,6 +673,8 @@ numerical_sim_SIR <- function(gamma, beta,
 ##################
 # BEST FUNCTIONS #
 ##################
+library(BEST)
+
 make_phylocomp_BESTplots  <- function(cnn_ape, phylo_ape, param_labels = expression("R"[0], delta[""], "m"[""]),
                                       file_param_names = c("R0", "delta", "m"), file_prefix = NULL){
 

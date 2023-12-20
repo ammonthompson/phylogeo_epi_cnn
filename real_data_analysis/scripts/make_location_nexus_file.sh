@@ -1,1 +1,1 @@
-../../MASTER/scripts/make_location_nexus_file.sh
+../../scripts/make_location_nexus_file.sh

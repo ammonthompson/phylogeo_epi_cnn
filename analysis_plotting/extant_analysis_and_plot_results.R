@@ -3,7 +3,6 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 library(vioplot)
 library(expm)
-library(BEST) #need to fix rjags here
 source("analysis_support_functions.R")
 
 # figure settings
@@ -143,6 +142,7 @@ make_experiment_figure(extant_miss_tree_cnn, extant_miss_tree_phylo, extant_miss
 
 quantile(extant_miss_tree_jaccard[,1], p = c(0.025, 0.5, 0.975))
 
+
 ######### MTBD CNN real data covid ###############
 # CNN results and Nadeau paper
 cnn_point_preds = read.table("../neural_network_dev/output/mtbd_nadeau2021_cnn_preds_full_and_a2.tsv", header =T, row.names = NULL)
@@ -164,7 +164,7 @@ make_mtbd_nadeau_plots(cnn_point_preds, nadeau2021_R0_log,
                        file_prefix =paste0(figure_relative_dir,
                                            "/Figure_10_nadeau2021_mtbd_compare"), file_type = file_type)
 
-  # compare delta and m estimates ( events per infectious period )
+# compare delta and m estimates ( events per infectious period )
 gamma_cnn = 0.05 # (arbitrary)
 gamma_nadeau = 36.5 # (year^-1)
 
@@ -187,13 +187,12 @@ points(c(0.2, 0.4), log(m_cnn), col = rgb(0,0,1,1), cex = 1, lwd = 2, pch = c(16
 arrows(x0 = 0, y0 = log(cnn_prior_m_prop_sample_prop[1]), y1 = log(cnn_prior_m_prop_sample_prop[2]), length = 0, col = "darkgray", lwd = 4)
 arrows(x0 = c(0.2, 0.4), y0 = unlist(log(m_prop_cnn_ci[c(1,3)])), y1 = unlist(log(m_prop_cnn_ci[c(2,4)])), length = 0, col = "blue", lwd = 2)
 
-
-# samples per effective infectious perior
+# samples per effective infectious period
 vioplot(log(nadeau2021_rho_log[,fig_location_order]), rectCol="orange", col = rgb(1, 0.66, 0, 0.8), names = locations,
         ylab = "log proportion sampled")
-points(c(0.5, 0.7), log(sample_prop_cnn), col = rgb(0,0,1,1), cex = 1, lwd = 2, pch = c(16, 4))
+points(c(0.5, 0.6), log(sample_prop_cnn), col = rgb(0,0,1,1), cex = 1, lwd = 2, pch = c(16, 4))
 arrows(x0 = 0.4, y0 = log(cnn_prior_m_prop_sample_prop[1]), y1 = log(cnn_prior_m_prop_sample_prop[2]), length = 0, col = "darkgray", lwd = 4)
-arrows(x0 = c(0.5, 0.7), y0 = unlist(log(sample_prop_cnn_ci[c(1,3)])), y1 = unlist(log(sample_prop_cnn_ci[c(2,4)])), length = 0, col = "blue", lwd = 2)
+arrows(x0 = c(0.5, 0.6), y0 = unlist(log(sample_prop_cnn_ci[c(1,3)])), y1 = unlist(log(sample_prop_cnn_ci[c(2,4)])), length = 0, col = "blue", lwd = 2)
 layout(1)
 dev.off()
 
@@ -203,6 +202,7 @@ dev.off()
 ################ BEST analyses ###############
 ##############################################
 ## Table S1 uses best_obj$HPI ################
+library(BEST) #need to fix rjags here
 
 extant_cnn_ape = get_ape(extant_cnn[,1:3], extant_labels[,1:3])
 extant_phylo_ape = get_ape(extant_phylo[,1:3], extant_labels[,1:3])
