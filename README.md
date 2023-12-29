@@ -10,7 +10,7 @@ All experiments were run on the following platform with the corresponding softwa
 
 ### Training and Other Large Data Files
 
-- Available in the Dryad repo under DOI: [XXXXXX](https://doi.org/XXXXXX).
+- Available in the Dryad repo under DOI: [https://doi.org/10.25338/B8SH2J](https://doi.org/10.25338/B8SH2J).
 
 ### Software and Libraries
 
@@ -65,7 +65,7 @@ The root contains the simulation scripts for generating the training and testing
 
 4. `scripts`:
     - General utility scripts for simulation and file processing tasks in the pipeline.
-    - Subdirectories include scripts for handling 'cblv' formatted data, generating XML files, extracting migration rates from XML, and more.
+    - Subdirectories include scripts for handling 'cblv' formatted data, generating XML files, extracting migration rates from XML, etc.
     - Python Modules:
         - Several utilities including scripts to handle tree encoding, modify tree structures, and vectorize trees.
     - R Scripts:
@@ -91,10 +91,10 @@ randomParams_Simulation.sh path/to/control_file.txt num_locations sim_num_from,s
 ```
 
 ### Phylogenetic analysis
-
+See README file in /phylo_analysis/
 
 ### CNN training and testing
-
+See README file in /neural_network_dev/
 
 ### Analysis and Plotting
 The final analysis script that generates results and figures for the manuscript is:

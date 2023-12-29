@@ -17,7 +17,6 @@ This directory contains a collection of support scripts used alongside the main 
 - `makePopulationPlots.r` 
 - `make_location_nexus_file.sh` 
 - `removeNodeType.py` 
-- `separateSeedTrees.py` 
 - `seqgen.sh` 
 - `tree_locations_to_cblv.sh` 
 - `truncate_to_extant_time.r` 
@@ -26,17 +25,13 @@ This directory contains a collection of support scripts used alongside the main 
 
 Support scripts related to `cblv`.
 
-- `__pycache__` 
 - `ammon_tree_utilities.py` 
-- `onehot_DNA_seq.sh` 
 - `vectorize_tree.py` 
 - `add_metadata_to_cblv.r` 
 - `cblv_visualization.r` 
-- `testing` 
-- `v2_add_metadata_to_cblv.r` 
 - `ammon_encoding.py` 
 - `convert_cnn_training_files_2_csv.sh` 
-- `wrapper_vectorize_tree.sh` 
+
 
 ## generate_xml_modules
 
@@ -49,7 +44,7 @@ Scripts related to generating XML modules.
 
 Scripts associated with random number generation and related tasks.
 
-- `checking.tsv` 
+
 - `onehot.sh` 
 - `rR0_uniform.sh` 
 - `repeat.r` 
