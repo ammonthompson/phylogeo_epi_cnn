@@ -4,7 +4,7 @@ This directory is dedicated to various phylogenetic analyses. The `.Rev` scripts
 
 ## Directory Overview
 
-- **sim_experiment_data.tar.gz**: Compressed data files used in simulation experiments.
+- **sim_experiment_data.tar.gz**: Compressed data files and scripts used in simulation experiments.
 
 ### HPD Estimates
 
@@ -16,15 +16,12 @@ The `hpd_estimates` directory contains various files related to highest posterio
 
 
 ### Scripts
-
-The `scripts` directory houses the main workhorse scripts for phylogenetic analysis (e.g. *.Rev).
+- `Within each experiment directory extant_* is the Rev script used to analyze the test dataset of trees`
+- `The ./scripts directory houses the main workhorse scripts for processing results of phylogenetic analyses.`
 
 ##### RevBayes analysis scripts:
-- `analyze_tree_set.sh`: this one analyzes large sets of trees calling the appropriate .Rev script below
-- `MTBD_aws_shared_param_tp_script.Rev`
-- `home_shared_param_tp_script.Rev`
-- `aws_shared_param_tp_script.Rev`
-- `aws_shared_param_underPrior_tp_script.Rev`
+- `./analyze_tree_set.sh`: this one analyzes large sets of trees calling the appropriate .Rev script below
+- `extant_*/aws_shared_param_tp_script.Rev` was used to fit phylogenetic SIR model to each test trees within`
 
 ##### HPD analysis scripts:
 - `get_CI.r`
