@@ -16,8 +16,8 @@ The `hpd_estimates` directory contains various files related to highest posterio
 
 
 ### Scripts
-- `Within each experiment directory extant_* is the Rev script used to analyze the test dataset of trees`
-- `The ./scripts directory houses the main workhorse scripts for processing results of phylogenetic analyses.`
+- Within each experiment directory **extant_\*** is the Rev script used to analyze the test dataset of trees
+- The **./scripts** directory houses the main workhorse scripts for processing results of phylogenetic analyses.
 
 ##### RevBayes analysis scripts:
 - `./analyze_tree_set.sh`: this one analyzes large sets of trees calling the appropriate .Rev script below
