@@ -1,3 +1,7 @@
+Introduction:
+=============
+This repository provides the code and data—including scripts for simulation, phylogenetic analysis, and neural network development—that support the research presented in our paper on leveraging deep learning for likelihood-free inference from phylogenetic trees ([Thompson et al. 2024](https://doi.org/10.1093/sysbio/syad074)). 
+
 System and Software:
 ====================
 
